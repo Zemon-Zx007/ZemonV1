@@ -1,5 +1,5 @@
--- [[ Swift Hub X - FIXED COLOR SYSTEM ]]
--- [[ Size: 420 x 340 | Redesigned by Pai for Zemon ]]
+-- [[ Swift Hub X - ULTIMATE FIXED COLOR SYSTEM ]]
+-- [[ Redesigned by Pai for Zemon ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -10,7 +10,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_ColorFixed"
+    ScreenGui.Name = "SwiftHubX_Final"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -78,16 +78,15 @@ function Library:CreateWindow(Settings)
     ContentHolder.Size = UDim2.new(1, -145, 1, -55)
     ContentHolder.BackgroundTransparency = 1
 
-    -- สร้าง Table เก็บฟังก์ชันที่จะส่งคืน
-    local Tabs = {}
-    
-    -- *** แก้ไขจุดนี้: ย้าย SetColor เข้ามาอยู่ใน table Tabs ที่เราจะส่งออกไป ***
-    function Tabs:SetColor(NewColor)
+    -- *** สร้าง Table หลักเพื่อส่ง Method ออกไปข้างนอก ***
+    local WindowAPI = {}
+
+    function WindowAPI:SetColor(NewColor)
         TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {BackgroundColor3 = NewColor}):Play()
     end
 
     local firstTab = true
-    function Tabs:CreateTab(TabName)
+    function WindowAPI:CreateTab(TabName)
         local TabButton = Instance.new("TextButton", TabContainer)
         TabButton.Size = UDim2.new(1, 0, 0, 30)
         TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -188,7 +187,7 @@ function Library:CreateWindow(Settings)
         end
         return Elements
     end
-    return Tabs
+    return WindowAPI -- *** ต้องส่งตัวนี้กลับไปเท่านั้น ***
 end
 
 return Library
