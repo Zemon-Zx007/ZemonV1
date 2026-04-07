@@ -1,4 +1,4 @@
--- [[ Swift Hub X - ULTIMATE FIXED COLOR SYSTEM ]]
+-- [[ Swift Hub X - Transparency & Header Edition ]]
 -- [[ Redesigned by Pai for Zemon ]]
 
 local Library = {}
@@ -10,7 +10,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_Final"
+    ScreenGui.Name = "SwiftHubX_Final_V3"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -23,9 +23,31 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
+    -- [[ Header: ชื่อ Hub และ ปุ่มไอคอนรูปตา ]]
+    local Header = Instance.new("Frame", MainFrame)
+    Header.Size = UDim2.new(1, 0, 0, 35)
+    Header.BackgroundTransparency = 1
+
+    local TitleLabel = Instance.new("TextLabel", Header)
+    TitleLabel.Text = "  " .. Title
+    TitleLabel.Size = UDim2.new(1, -40, 1, 0)
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextSize = 14
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.BackgroundTransparency = 1
+
+    local EyeBtn = Instance.new("TextButton", Header)
+    EyeBtn.Name = "TransparencyBtn"
+    EyeBtn.Text = "👁️" -- ไอคอนรูปตา
+    EyeBtn.Size = UDim2.new(0, 30, 0, 30)
+    EyeBtn.Position = UDim2.new(1, -35, 0, 3)
+    EyeBtn.BackgroundTransparency = 1
+    EyeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    EyeBtn.TextSize = 18
+
     -- [[ Floating Button ]]
-    local ToggleBtn = Instance.new("TextButton")
-    ToggleBtn.Parent = ScreenGui
+    local ToggleBtn = Instance.new("TextButton", ScreenGui)
     ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
     ToggleBtn.Position = UDim2.new(0, 10, 0.5, -25)
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -65,10 +87,18 @@ function Library:CreateWindow(Settings)
         MainFrame.Visible = not MainFrame.Visible
     end)
 
+    -- [[ ระบบโปร่งใส (Transparency Mode) ]]
+    local isTransparent = false
+    EyeBtn.MouseButton1Click:Connect(function()
+        isTransparent = not isTransparent
+        local targetTransparency = isTransparent and 0.5 or 0 -- 0.5 คือมองทะลุได้ 50%
+        TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetTransparency}):Play()
+    end)
+
     -- Sidebar & Content
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
-    TabContainer.Size = UDim2.new(0, 120, 1, -40)
-    TabContainer.Position = UDim2.new(0, 10, 0, 30)
+    TabContainer.Size = UDim2.new(0, 120, 1, -75)
+    TabContainer.Position = UDim2.new(0, 10, 0, 40)
     TabContainer.BackgroundTransparency = 1
     TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 5)
@@ -78,7 +108,6 @@ function Library:CreateWindow(Settings)
     ContentHolder.Size = UDim2.new(1, -145, 1, -55)
     ContentHolder.BackgroundTransparency = 1
 
-    -- *** สร้าง Table หลักเพื่อส่ง Method ออกไปข้างนอก ***
     local WindowAPI = {}
 
     function WindowAPI:SetColor(NewColor)
@@ -100,8 +129,7 @@ function Library:CreateWindow(Settings)
         Page.BackgroundTransparency = 1
         Page.Visible = firstTab
         Page.ScrollBarThickness = 1
-        local PageLayout = Instance.new("UIListLayout", Page)
-        PageLayout.Padding = UDim.new(0, 8)
+        Instance.new("UIListLayout", Page).Padding = UDim.new(0, 8)
 
         if firstTab then TabButton.TextColor3 = Color3.fromRGB(255, 255, 255) firstTab = false end
 
@@ -187,7 +215,7 @@ function Library:CreateWindow(Settings)
         end
         return Elements
     end
-    return WindowAPI -- *** ต้องส่งตัวนี้กลับไปเท่านั้น ***
+    return WindowAPI
 end
 
 return Library
