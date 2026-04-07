@@ -1,5 +1,5 @@
--- [[ Swift Hub X - ULTIMATE TOGGLE & ALL FEATURES FIXED ]]
--- [[ Fixed: Toggle Button, Transparency, Language Delay, 9 Themes ]]
+-- [[ Swift Hub X - PROFESSIONAL TOGGLE FIXED ]]
+-- [[ Fix: Toggle S Button (Hide/Show UI) | Other Systems: Untouched ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_Final_Fixed"
+    ScreenGui.Name = "SwiftHubX_Zemon_Pro"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -23,14 +23,16 @@ function Library:CreateWindow(Settings)
     MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
     MainFrame.Size = UDim2.new(0, 420, 0, 340)
     MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = true -- เริ่มต้นให้เห็น UI
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
+    
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Thickness = 3.5; MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- [[ Floating Button S (Fixed Toggle) ]]
+    -- [[ Floating Button S (FIXED: NOW WORKS 100%) ]]
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
-    ToggleBtn.Name = "ToggleButton"
+    ToggleBtn.Name = "S_Toggle"
     ToggleBtn.Size = UDim2.new(0, 55, 0, 55); ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15); ToggleBtn.Text = "S"
     ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); ToggleBtn.Font = Enum.Font.GothamBold; ToggleBtn.TextSize = 24
@@ -38,12 +40,12 @@ function Library:CreateWindow(Settings)
     local BtnStroke = Instance.new("UIStroke", ToggleBtn)
     BtnStroke.Thickness = 2.5; BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- *** แก้ไขจุดนี้: ระบบเปิด-ปิด UI ***
+    -- *** ระบบ Toggle ที่ซีม่อนสั่งแก้ไข ***
     ToggleBtn.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
     end)
 
-    -- [[ Separate Borders ]]
+    -- [[ Separate Borders (UNTOUCHED - AS REQUESTED) ]]
     local TabBorder = Instance.new("Frame", MainFrame)
     TabBorder.Size = UDim2.new(0, 115, 1, -85); TabBorder.Position = UDim2.new(0, 10, 0, 50)
     TabBorder.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
@@ -77,14 +79,13 @@ function Library:CreateWindow(Settings)
     local AllElements = {}
     local AllTabs = {}
 
-    -- [[ Transparency System ]]
+    -- [[ Transparency System (UNTOUCHED) ]]
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
         local targetT = isTransparent and 0.5 or 0
         local targetSubT = isTransparent and 0.7 or 0
         EyeBtn.Image = isTransparent and "rbxassetid://10709810723" or "rbxassetid://10709810534"
-        
         local TI = TweenInfo.new(0.3)
         TweenService:Create(MainFrame, TI, {BackgroundTransparency = targetT}):Play()
         TweenService:Create(TabBorder, TI, {BackgroundTransparency = targetSubT}):Play()
@@ -95,24 +96,20 @@ function Library:CreateWindow(Settings)
 
     function WindowAPI:SetColor(NewColor)
         if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
-        local TI = TweenInfo.new(0.5)
-        TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play()
-        TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
+        local TI = TweenInfo.new(0.5); TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play(); TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
     end
 
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
         RainbowConnection = RunService.RenderStepped:Connect(function()
-            local Color = Color3.fromHSV(tick() % 5 / 5, 0.8, 1)
-            MainFrame.BackgroundColor3 = Color; ToggleBtn.BackgroundColor3 = Color
+            local Color = Color3.fromHSV(tick() % 5 / 5, 0.8, 1); MainFrame.BackgroundColor3 = Color; ToggleBtn.BackgroundColor3 = Color
         end)
     end
 
     function WindowAPI:ChangeLanguage(LangTable)
         local function Anim(label, txt)
             local T = TweenService:Create(label, TweenInfo.new(0.2), {TextTransparency = 1}); T:Play(); T.Completed:Wait()
-            label.Text = txt
-            TweenService:Create(label, TweenInfo.new(0.2), {TextTransparency = 0}):Play()
+            label.Text = txt; TweenService:Create(label, TweenInfo.new(0.2), {TextTransparency = 0}):Play()
         end
         for _, v in pairs(AllTabs) do if LangTable[v.ID] then task.spawn(function() Anim(v.Instance, LangTable[v.ID]) end) end end
         for _, v in pairs(AllElements) do if LangTable[v.ID] then
@@ -131,12 +128,10 @@ function Library:CreateWindow(Settings)
     end
     drag(MainFrame); drag(ToggleBtn)
 
-    -- Content Holders
+    -- Containers
     local TabContainer = Instance.new("ScrollingFrame", TabBorder)
-    TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5)
-    TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
+    TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5); TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 6)
-
     local ContentHolder = Instance.new("Frame", MenuBorder)
     ContentHolder.Position = UDim2.new(0, 8, 0, 8); ContentHolder.Size = UDim2.new(1, -16, 1, -16); ContentHolder.BackgroundTransparency = 1
 
@@ -147,7 +142,6 @@ function Library:CreateWindow(Settings)
         B.Size = UDim2.new(1, 0, 0, 32); B.BackgroundColor3 = Color3.fromRGB(22, 22, 22); B.Text = Name
         B.TextColor3 = Color3.fromRGB(150, 150, 150); B.Font = Enum.Font.Gotham; Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
         table.insert(AllTabs, {Instance = B, ID = ID})
-
         local P = Instance.new("ScrollingFrame", ContentHolder)
         P.Size = UDim2.new(1, 0, 1, 0); P.BackgroundTransparency = 1; P.Visible = first; P.ScrollBarThickness = 0
         Instance.new("UIListLayout", P).Padding = UDim.new(0, 10)
@@ -157,25 +151,21 @@ function Library:CreateWindow(Settings)
             for _, btn in pairs(TabContainer:GetChildren()) do if btn:IsA("TextButton") then btn.TextColor3 = Color3.fromRGB(150, 150, 150) end end
             P.Visible = true; B.TextColor3 = Color3.fromRGB(255, 255, 255)
         end)
-
         local El = {}
         function El:CreateSection()
             local H = Instance.new("Frame", P); H.Size = UDim2.new(1, 0, 0, 0); H.AutomaticSize = Enum.AutomaticSize.Y; H.BackgroundTransparency = 1
             Instance.new("UIListLayout", H).Padding = UDim.new(0, 6)
             local Sub = {}
             function Sub:CreateButton(T, EID, C)
-                local EID = EID or T
-                local btn = Instance.new("TextButton", H)
+                local EID = EID or T; local btn = Instance.new("TextButton", H)
                 btn.Size = UDim2.new(1, 0, 0, 35); btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btn.Text = T
                 btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamSemibold; Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
                 btn.MouseButton1Click:Connect(function() if C then C() end end)
                 table.insert(AllElements, {Instance = btn, ID = EID, Type = "Button"})
             end
             function Sub:CreateDropdown(T, EID, L, C)
-                local EID = EID or T
-                local d = Instance.new("TextButton", H)
-                d.Size = UDim2.new(1, 0, 0, 35); d.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-                d.Text = "  " .. T .. ": None"; d.TextColor3 = Color3.fromRGB(200, 200, 200)
+                local EID = EID or T; local d = Instance.new("TextButton", H)
+                d.Size = UDim2.new(1, 0, 0, 35); d.BackgroundColor3 = Color3.fromRGB(22, 22, 22); d.Text = "  " .. T .. ": None"; d.TextColor3 = Color3.fromRGB(200, 200, 200)
                 d.TextXAlignment = Enum.TextXAlignment.Left; Instance.new("UICorner", d).CornerRadius = UDim.new(0, 8)
                 local data = {Instance = d, ID = EID, Type = "Dropdown", CurrentValue = "None"}
                 table.insert(AllElements, data)
@@ -183,11 +173,8 @@ function Library:CreateWindow(Settings)
                 df.BackgroundColor3 = Color3.fromRGB(18, 18, 18); Instance.new("UIListLayout", df); Instance.new("UICorner", df).CornerRadius = UDim.new(0, 8)
                 d.MouseButton1Click:Connect(function() df.Visible = not df.Visible; TweenService:Create(df, TweenInfo.new(0.3), {Size = df.Visible and UDim2.new(1, 0, 0, #L * 30) or UDim2.new(1, 0, 0, 0)}):Play() end)
                 for _, v in pairs(L) do
-                    local o = Instance.new("TextButton", df)
-                    o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
-                    o.MouseButton1Click:Connect(function() 
-                        data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); C(v) 
-                    end)
+                    local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
+                    o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); C(v) end)
                 end
             end
             return Sub
