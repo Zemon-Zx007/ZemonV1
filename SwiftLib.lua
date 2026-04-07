@@ -1,4 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL LIBRARY WITH NOTIFY FIXED ]]
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V3 ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -64,8 +64,8 @@ function Library:CreateWindow(Settings)
     local RainbowConnection = nil
     local AllElements = {}
     local AllTabs = {}
+    local CodeBoxes = {}
 
-    -- [[ 🔥 เติมระบบ Notify กลับคืนมา 🔥 ]]
     function WindowAPI:Notify(Msg)
         local NotifFrame = Instance.new("Frame", ScreenGui)
         NotifFrame.Size = UDim2.new(0, 220, 0, 45); NotifFrame.Position = UDim2.new(1, 20, 1, -60)
@@ -93,6 +93,9 @@ function Library:CreateWindow(Settings)
         TweenService:Create(TabBorder, TI, {BackgroundTransparency = targetSubT}):Play()
         TweenService:Create(MenuBorder, TI, {BackgroundTransparency = targetSubT}):Play()
         TweenService:Create(ToggleBtn, TI, {BackgroundTransparency = targetT}):Play()
+        for _, box in pairs(CodeBoxes) do
+            TweenService:Create(box, TI, {BackgroundTransparency = targetSubT}):Play()
+        end
     end)
 
     function WindowAPI:SetColor(NewColor)
@@ -168,8 +171,24 @@ function Library:CreateWindow(Settings)
                 d.MouseButton1Click:Connect(function() df.Visible = not df.Visible; TweenService:Create(df, TweenInfo.new(0.3), {Size = df.Visible and UDim2.new(1, 0, 0, #L * 30) or UDim2.new(1, 0, 0, 0)}):Play() end)
                 for _, v in pairs(L) do
                     local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
-                    o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); C(v) end)
+                    o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); end) -- ลบการรัน Callback ทันทีออก
                 end
+                return {GetSelected = function() return data.CurrentValue end}
+            end
+            function Sub:CreateCodeBox(ID)
+                local Box = Instance.new("Frame", H)
+                Box.Size = UDim2.new(1, 0, 0, 80); Box.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+                Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 10)
+                local Stroke = Instance.new("UIStroke", Box)
+                Stroke.Thickness = 1.5; Stroke.Color = Color3.fromRGB(50, 50, 50)
+                local TextLabel = Instance.new("TextLabel", Box)
+                TextLabel.Size = UDim2.new(1, -20, 1, -20); TextLabel.Position = UDim2.new(0, 10, 0, 10)
+                TextLabel.BackgroundTransparency = 1; TextLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+                TextLabel.Font = Enum.Font.Code; TextLabel.TextSize = 13; TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+                TextLabel.TextYAlignment = Enum.TextYAlignment.Top; TextLabel.Text = "Loading Status..."
+                table.insert(CodeBoxes, Box)
+                table.insert(AllElements, {Instance = TextLabel, ID = ID, Type = "CodeBox"})
+                return {SetText = function(txt) TextLabel.Text = txt end}
             end
             return Sub
         end
