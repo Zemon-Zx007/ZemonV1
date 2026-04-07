@@ -1,5 +1,5 @@
--- [[ Swift Hub X - SVG EYE-OFF EDITION ]]
--- [[ Border: 3.5 (Fixed White) | SVG Icon Support | Redesigned by Pai ]]
+-- [[ Swift Hub X - SVG EYE-FIX EDITION ]]
+-- [[ Border: 3.5 (Fixed White) | Fixed Eye Transparency | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_SVG_Edition"
+    ScreenGui.Name = "SwiftHubX_EyeFixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -59,14 +59,15 @@ function Library:CreateWindow(Settings)
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
     TitleLabel.BackgroundTransparency = 1
 
-    -- [[ ส่วนแก้ไข: ใช้ไอคอน SVG (eye-off) ]]
+    -- ไอคอน SVG (eye-off)
     local EyeBtn = Instance.new("ImageButton", Header)
     EyeBtn.Name = "EyeIcon"
-    EyeBtn.Size = UDim2.new(0, 24, 0, 24) -- ขนาดไอคอน SVG มาตรฐาน
+    EyeBtn.Size = UDim2.new(0, 24, 0, 24)
     EyeBtn.Position = UDim2.new(1, -35, 0.5, -12)
     EyeBtn.BackgroundTransparency = 1
-    EyeBtn.Image = "rbxassetid://10709810534" -- ไอคอน SVG eye-off (Lucide Style)
+    EyeBtn.Image = "rbxassetid://10709810534" -- eye
     EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    EyeBtn.ZIndex = 10 -- ให้มั่นใจว่าอยู่บนสุด
 
     -- Drag System
     local function MakeDraggable(frame)
@@ -89,14 +90,21 @@ function Library:CreateWindow(Settings)
 
     ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
+    -- [[ ส่วนแก้ไข: ล็อคความชัดของไอคอน ]]
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
-        local targetT = isTransparent and 0.5 or 0
-        -- เปลี่ยนรูปไอคอนตามสถานะ
+        local targetTransparency = isTransparent and 0.5 or 0
+        
+        -- สลับรูปไอคอน
         EyeBtn.Image = isTransparent and "rbxassetid://10709810723" or "rbxassetid://10709810534"
-        TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
-        TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
+        
+        -- ลดแค่ BackgroundTransparency แต่ห้ามลด ImageTransparency ของปุ่มตา
+        TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetTransparency}):Play()
+        TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetTransparency}):Play()
+        
+        -- บังคับให้ไอคอนรูปตายังคงความชัด 100% (0 คือทึบ)
+        EyeBtn.ImageTransparency = 0 
     end)
 
     local WindowAPI = {}
