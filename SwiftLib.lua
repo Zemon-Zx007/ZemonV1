@@ -1,6 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL TOGGLE FIXED ]]
--- [[ Fix: Toggle S Button (Hide/Show UI) | Other Systems: Untouched ]]
-
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY WITH NOTIFY FIXED ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -9,13 +7,11 @@ local RunService = game:GetService("RunService")
 function Library:CreateWindow(Settings)
     local Settings = Settings or {}
     local Title = Settings.Title or "Swift Hub X"
-    
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "SwiftHubX_Zemon_Pro"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    -- [[ Main Window ]]
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
@@ -23,14 +19,11 @@ function Library:CreateWindow(Settings)
     MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
     MainFrame.Size = UDim2.new(0, 420, 0, 340)
     MainFrame.BorderSizePixel = 0
-    MainFrame.Visible = true -- เริ่มต้นให้เห็น UI
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
-    
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Thickness = 3.5; MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- [[ Floating Button S (FIXED: NOW WORKS 100%) ]]
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
     ToggleBtn.Name = "S_Toggle"
     ToggleBtn.Size = UDim2.new(0, 55, 0, 55); ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
@@ -40,12 +33,8 @@ function Library:CreateWindow(Settings)
     local BtnStroke = Instance.new("UIStroke", ToggleBtn)
     BtnStroke.Thickness = 2.5; BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- *** ระบบ Toggle ที่ซีม่อนสั่งแก้ไข ***
-    ToggleBtn.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
-    end)
+    ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-    -- [[ Separate Borders (UNTOUCHED - AS REQUESTED) ]]
     local TabBorder = Instance.new("Frame", MainFrame)
     TabBorder.Size = UDim2.new(0, 115, 1, -85); TabBorder.Position = UDim2.new(0, 10, 0, 50)
     TabBorder.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
@@ -60,7 +49,6 @@ function Library:CreateWindow(Settings)
     local MenuStroke = Instance.new("UIStroke", MenuBorder)
     MenuStroke.Thickness = 2.5; MenuStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- Header & Eye Button
     local Header = Instance.new("Frame", MainFrame)
     Header.Size = UDim2.new(1, 0, 0, 40); Header.BackgroundTransparency = 1
     local TitleLabel = Instance.new("TextLabel", Header)
@@ -70,16 +58,30 @@ function Library:CreateWindow(Settings)
 
     local EyeBtn = Instance.new("ImageButton", Header)
     EyeBtn.Size = UDim2.new(0, 24, 0, 24); EyeBtn.Position = UDim2.new(1, -35, 0.5, -12)
-    EyeBtn.BackgroundTransparency = 1; EyeBtn.Image = "rbxassetid://10709810534"
-    EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    EyeBtn.BackgroundTransparency = 1; EyeBtn.Image = "rbxassetid://10709810534"; EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
 
-    -- API & Connections
     local WindowAPI = {}
     local RainbowConnection = nil
     local AllElements = {}
     local AllTabs = {}
 
-    -- [[ Transparency System (UNTOUCHED) ]]
+    -- [[ 🔥 เติมระบบ Notify กลับคืนมา 🔥 ]]
+    function WindowAPI:Notify(Msg)
+        local NotifFrame = Instance.new("Frame", ScreenGui)
+        NotifFrame.Size = UDim2.new(0, 220, 0, 45); NotifFrame.Position = UDim2.new(1, 20, 1, -60)
+        NotifFrame.BackgroundColor3 = MainFrame.BackgroundColor3; Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 10)
+        local NotifStroke = Instance.new("UIStroke", NotifFrame)
+        NotifStroke.Thickness = 2; NotifStroke.Color = Color3.fromRGB(255, 255, 255)
+        local NotifText = Instance.new("TextLabel", NotifFrame)
+        NotifText.Text = Msg; NotifText.Size = UDim2.new(1, 0, 1, 0); NotifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NotifText.Font = Enum.Font.GothamSemibold; NotifText.TextSize = 13; NotifText.BackgroundTransparency = 1
+        NotifFrame:TweenPosition(UDim2.new(1, -240, 1, -60), "Out", "Quart", 0.5, true)
+        task.delay(3, function()
+            NotifFrame:TweenPosition(UDim2.new(1, 20, 1, -60), "In", "Quart", 0.5, true)
+            task.wait(0.5); NotifFrame:Destroy()
+        end)
+    end
+
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
@@ -91,7 +93,6 @@ function Library:CreateWindow(Settings)
         TweenService:Create(TabBorder, TI, {BackgroundTransparency = targetSubT}):Play()
         TweenService:Create(MenuBorder, TI, {BackgroundTransparency = targetSubT}):Play()
         TweenService:Create(ToggleBtn, TI, {BackgroundTransparency = targetT}):Play()
-        EyeBtn.ImageTransparency = 0
     end)
 
     function WindowAPI:SetColor(NewColor)
@@ -118,32 +119,25 @@ function Library:CreateWindow(Settings)
         end end
     end
 
-    -- Dragging
     local function drag(f)
         local d, i, s, p
         f.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then d = true; s = input.Position; p = f.Position end end)
         f.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then i = input end end)
         UserInputService.InputChanged:Connect(function(input) if input == i and d then local delta = input.Position - s; f.Position = UDim2.new(p.X.Scale, p.X.Offset + delta.X, p.Y.Scale, p.Y.Offset + delta.Y) end end)
-        f.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then d = false end end)
+        f.InputEnded:Connect(function(input) if input.UserInputType == Enum.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then d = false end end)
     end
     drag(MainFrame); drag(ToggleBtn)
 
-    -- Containers
-    local TabContainer = Instance.new("ScrollingFrame", TabBorder)
-    TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5); TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
+    local TabContainer = Instance.new("ScrollingFrame", TabBorder); TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5); TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 6)
-    local ContentHolder = Instance.new("Frame", MenuBorder)
-    ContentHolder.Position = UDim2.new(0, 8, 0, 8); ContentHolder.Size = UDim2.new(1, -16, 1, -16); ContentHolder.BackgroundTransparency = 1
+    local ContentHolder = Instance.new("Frame", MenuBorder); ContentHolder.Position = UDim2.new(0, 8, 0, 8); ContentHolder.Size = UDim2.new(1, -16, 1, -16); ContentHolder.BackgroundTransparency = 1
 
     local first = true
     function WindowAPI:CreateTab(Name, ID)
-        local ID = ID or Name
-        local B = Instance.new("TextButton", TabContainer)
-        B.Size = UDim2.new(1, 0, 0, 32); B.BackgroundColor3 = Color3.fromRGB(22, 22, 22); B.Text = Name
+        local ID = ID or Name; local B = Instance.new("TextButton", TabContainer); B.Size = UDim2.new(1, 0, 0, 32); B.BackgroundColor3 = Color3.fromRGB(22, 22, 22); B.Text = Name
         B.TextColor3 = Color3.fromRGB(150, 150, 150); B.Font = Enum.Font.Gotham; Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
         table.insert(AllTabs, {Instance = B, ID = ID})
-        local P = Instance.new("ScrollingFrame", ContentHolder)
-        P.Size = UDim2.new(1, 0, 1, 0); P.BackgroundTransparency = 1; P.Visible = first; P.ScrollBarThickness = 0
+        local P = Instance.new("ScrollingFrame", ContentHolder); P.Size = UDim2.new(1, 0, 1, 0); P.BackgroundTransparency = 1; P.Visible = first; P.ScrollBarThickness = 0
         Instance.new("UIListLayout", P).Padding = UDim.new(0, 10)
         if first then B.TextColor3 = Color3.fromRGB(255, 255, 255); first = false end
         B.MouseButton1Click:Connect(function()
@@ -183,5 +177,4 @@ function Library:CreateWindow(Settings)
     end
     return WindowAPI
 end
-
 return Library
