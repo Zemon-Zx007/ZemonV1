@@ -1,4 +1,4 @@
--- [[ Swift Hub X - FIXED REJOIN BUG V2 ]]
+-- [[ Swift Hub X - Color Change Edition ]]
 -- [[ Redesigned by Pai for Zemon ]]
 
 local Library = {}
@@ -10,23 +10,18 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_FinalFixed"
+    ScreenGui.Name = "SwiftHubX_ColorV1"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
-    -- Main Frame (420 x 340)
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- สีเริ่มต้น
     MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
     MainFrame.Size = UDim2.new(0, 420, 0, 340)
     MainFrame.BorderSizePixel = 0
-    MainFrame.Visible = true
-    
-    local MainCorner = Instance.new("UICorner")
-    MainCorner.CornerRadius = UDim.new(0, 12)
-    MainCorner.Parent = MainFrame
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
     -- [[ Floating Button ]]
     local ToggleBtn = Instance.new("TextButton")
@@ -40,6 +35,7 @@ function Library:CreateWindow(Settings)
     ToggleBtn.TextSize = 20
     Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
     
+    -- Drag System
     local function MakeDraggable(frame)
         local dragging, dragInput, dragStart, startPos
         frame.InputBegan:Connect(function(input)
@@ -69,23 +65,20 @@ function Library:CreateWindow(Settings)
         MainFrame.Visible = not MainFrame.Visible
     end)
 
-    -- Sidebar
-    local Sidebar = Instance.new("Frame")
-    Sidebar.Parent = MainFrame
-    Sidebar.BackgroundTransparency = 1
-    Sidebar.Size = UDim2.new(0, 120, 1, -40)
-    Sidebar.Position = UDim2.new(0, 10, 0, 30)
+    -- ฟังก์ชันสำหรับเปลี่ยนสี UI (ซีม่อนเรียกใช้ได้จากข้างนอก)
+    function Library:SetColor(NewColor)
+        TweenService:Create(MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = NewColor}):Play()
+    end
 
-    local TabContainer = Instance.new("ScrollingFrame")
-    TabContainer.Parent = Sidebar
-    TabContainer.Size = UDim2.new(1, 0, 1, 0)
+    -- Sidebar & Content setup
+    local TabContainer = Instance.new("ScrollingFrame", MainFrame)
+    TabContainer.Size = UDim2.new(0, 120, 1, -40)
+    TabContainer.Position = UDim2.new(0, 10, 0, 30)
     TabContainer.BackgroundTransparency = 1
     TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 5)
 
-    -- Content
-    local ContentHolder = Instance.new("Frame")
-    ContentHolder.Parent = MainFrame
+    local ContentHolder = Instance.new("Frame", MainFrame)
     ContentHolder.Position = UDim2.new(0, 135, 0, 45)
     ContentHolder.Size = UDim2.new(1, -145, 1, -55)
     ContentHolder.BackgroundTransparency = 1
@@ -94,8 +87,7 @@ function Library:CreateWindow(Settings)
     local firstTab = true
 
     function Tabs:CreateTab(TabName)
-        local TabButton = Instance.new("TextButton")
-        TabButton.Parent = TabContainer
+        local TabButton = Instance.new("TextButton", TabContainer)
         TabButton.Size = UDim2.new(1, 0, 0, 30)
         TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         TabButton.Text = TabName
@@ -103,19 +95,15 @@ function Library:CreateWindow(Settings)
         TabButton.Font = Enum.Font.Gotham
         Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
 
-        local Page = Instance.new("ScrollingFrame")
-        Page.Parent = ContentHolder
+        local Page = Instance.new("ScrollingFrame", ContentHolder)
         Page.Size = UDim2.new(1, 0, 1, 0)
         Page.BackgroundTransparency = 1
-        Page.Visible = firstTab -- ให้โชว์แค่หน้าแรกตอนโหลด
+        Page.Visible = firstTab
         Page.ScrollBarThickness = 1
         local PageLayout = Instance.new("UIListLayout", Page)
         PageLayout.Padding = UDim.new(0, 8)
 
-        if firstTab then
-            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            firstTab = false
-        end
+        if firstTab then TabButton.TextColor3 = Color3.fromRGB(255, 255, 255) firstTab = false end
 
         TabButton.MouseButton1Click:Connect(function()
             for _, v in pairs(ContentHolder:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
@@ -126,74 +114,81 @@ function Library:CreateWindow(Settings)
 
         local Elements = {}
         function Elements:CreateSection(SectionName)
-            local SecFrame = Instance.new("Frame")
-            SecFrame.Parent = Page
+            local SecFrame = Instance.new("Frame", Page)
             SecFrame.Size = UDim2.new(1, -5, 0, 25)
             SecFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
             Instance.new("UICorner", SecFrame).CornerRadius = UDim.new(0, 6)
             
-            local SecTitle = Instance.new("TextLabel")
-            SecTitle.Parent = SecFrame
+            local SecTitle = Instance.new("TextLabel", SecFrame)
             SecTitle.Text = "  " .. SectionName
             SecTitle.Size = UDim2.new(1, 0, 1, 0)
             SecTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
             SecTitle.Font = Enum.Font.GothamBold
             SecTitle.TextSize = 11
-            SecTitle.TextXAlignment = Enum.TextXAlignment.Left
             SecTitle.BackgroundTransparency = 1
+            SecTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-            local ItemHolder = Instance.new("Frame")
-            ItemHolder.Parent = Page
+            local ItemHolder = Instance.new("Frame", Page)
             ItemHolder.Size = UDim2.new(1, -5, 0, 0)
             ItemHolder.AutomaticSize = Enum.AutomaticSize.Y
             ItemHolder.BackgroundTransparency = 1
             Instance.new("UIListLayout", ItemHolder).Padding = UDim.new(0, 5)
 
             local Sub = {}
+            -- Button
             function Sub:CreateButton(Text, Callback)
-                local B = Instance.new("TextButton")
-                B.Parent = ItemHolder
+                local B = Instance.new("TextButton", ItemHolder)
                 B.Size = UDim2.new(1, 0, 0, 30)
                 B.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
                 B.Text = Text
                 B.TextColor3 = Color3.fromRGB(255, 255, 255)
                 B.Font = Enum.Font.GothamSemibold
                 Instance.new("UICorner", B).CornerRadius = UDim.new(0, 5)
-                
-                B.MouseButton1Click:Connect(function()
-                    if Callback then Callback() end
-                end)
+                B.MouseButton1Click:Connect(function() if Callback then Callback() end end)
             end
 
-            function Sub:CreateToggle(Text, Default, Callback)
-                local T = Instance.new("TextButton")
-                T.Parent = ItemHolder
-                T.Size = UDim2.new(1, 0, 0, 30)
-                T.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                T.Text = "  " .. Text
-                T.TextColor3 = Color3.fromRGB(200, 200, 200)
-                T.TextXAlignment = Enum.TextXAlignment.Left
-                Instance.new("UICorner", T).CornerRadius = UDim.new(0, 5)
+            -- Dropdown
+            function Sub:CreateDropdown(Text, List, Callback)
+                local D = Instance.new("TextButton", ItemHolder)
+                D.Size = UDim2.new(1, 0, 0, 30)
+                D.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                D.Text = "  " .. Text .. ": None"
+                D.TextColor3 = Color3.fromRGB(200, 200, 200)
+                D.TextXAlignment = Enum.TextXAlignment.Left
+                Instance.new("UICorner", D).CornerRadius = UDim.new(0, 5)
 
-                local Ind = Instance.new("Frame")
-                Ind.Parent = T
-                Ind.Position = UDim2.new(1, -35, 0.5, -8)
-                Ind.Size = UDim2.new(0, 25, 0, 16)
-                Ind.BackgroundColor3 = Default and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(60, 60, 60)
-                Instance.new("UICorner", Ind).CornerRadius = UDim.new(1, 0)
+                local DropFrame = Instance.new("Frame", ItemHolder)
+                DropFrame.Size = UDim2.new(1, 0, 0, 0)
+                DropFrame.Visible = false
+                DropFrame.ClipsDescendants = true
+                DropFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+                Instance.new("UIListLayout", DropFrame)
+                Instance.new("UICorner", DropFrame)
 
-                local State = Default
-                T.MouseButton1Click:Connect(function()
-                    State = not State
-                    TweenService:Create(Ind, TweenInfo.new(0.2), {BackgroundColor3 = State and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(60, 60, 60)}):Play()
-                    if Callback then Callback(State) end
+                D.MouseButton1Click:Connect(function()
+                    DropFrame.Visible = not DropFrame.Visible
+                    DropFrame.Size = DropFrame.Visible and UDim2.new(1, 0, 0, #List * 25) or UDim2.new(1, 0, 0, 0)
                 end)
+
+                for _, val in pairs(List) do
+                    local Opt = Instance.new("TextButton", DropFrame)
+                    Opt.Size = UDim2.new(1, 0, 0, 25)
+                    Opt.BackgroundTransparency = 1
+                    Opt.Text = val
+                    Opt.TextColor3 = Color3.fromRGB(180, 180, 180)
+                    Opt.Font = Enum.Font.Gotham
+                    Opt.MouseButton1Click:Connect(function()
+                        D.Text = "  " .. Text .. ": " .. val
+                        DropFrame.Visible = false
+                        DropFrame.Size = UDim2.new(1, 0, 0, 0)
+                        if Callback then Callback(val) end
+                    end)
+                end
             end
             return Sub
         end
         return Elements
     end
-    -- *** ลบคำสั่ง .Fire() ที่ทำให้รันเองออกไปแล้วค้าบ ***
     return Tabs
 end
 
