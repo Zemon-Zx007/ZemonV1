@@ -1,4 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.3 (Auto-Resize CodeBox) ]]
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.4 (Full Language Support) ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 function Library:CreateWindow(Settings)
     local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-    ScreenGui.Name = "SwiftHubX_Fixed_V4.3"; ScreenGui.ResetOnSpawn = false
+    ScreenGui.Name = "SwiftHubX_V4.4"; ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -49,15 +49,6 @@ function Library:CreateWindow(Settings)
     local WindowAPI = {AllTabs = {}, AllElements = {}, CodeBoxes = {}}
     local RainbowConnection = nil
 
-    local EyeBtn = Instance.new("TextButton", MainFrame)
-    EyeBtn.Size = UDim2.new(0, 30, 0, 30); EyeBtn.Position = UDim2.new(1, -40, 0, 5); EyeBtn.BackgroundTransparency = 1; EyeBtn.Text = "👁️"; EyeBtn.TextSize = 18
-    local isTransparent = false
-    EyeBtn.MouseButton1Click:Connect(function()
-        isTransparent = not isTransparent
-        local bgT = isTransparent and 0.4 or 0; MainFrame.BackgroundTransparency = bgT
-        for _, box in pairs(WindowAPI.CodeBoxes) do box.BackgroundTransparency = isTransparent and 0.8 or 0 end
-    end)
-
     function WindowAPI:Notify(Msg)
         local f = Instance.new("Frame", ScreenGui); f.Size = UDim2.new(0, 220, 0, 45); f.Position = UDim2.new(1, 20, 1, -60); f.BackgroundColor3 = MainFrame.BackgroundColor3
         Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = Color3.fromRGB(255,255,255)
@@ -69,9 +60,18 @@ function Library:CreateWindow(Settings)
     function WindowAPI:SetColor(C) if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end; MainFrame.BackgroundColor3 = C; ToggleBtn.BackgroundColor3 = C end
     function WindowAPI:SetRainbow() if RainbowConnection then RainbowConnection:Disconnect() end; RainbowConnection = RunService.RenderStepped:Connect(function() local C = Color3.fromHSV(tick() % 5 / 5, 0.8, 1); MainFrame.BackgroundColor3 = C; ToggleBtn.BackgroundColor3 = C end) end
 
+    -- [[ ฟังก์ชันอัปเดตภาษาแบบ Real-time ]]
     function WindowAPI:ChangeLanguage(LT)
-        for _, v in pairs(WindowAPI.AllTabs) do if LT[v.ID] then v.Instance.Text = LT[v.ID] end end
-        for _, v in pairs(WindowAPI.AllElements) do if LT[v.ID] then v.Instance.Text = (v.Type == "Dropdown") and "  " .. LT[v.ID] .. ": " .. v.CurrentValue or LT[v.ID] end end
+        for _, v in pairs(self.AllTabs) do if LT[v.ID] then v.Instance.Text = LT[v.ID] end end
+        for _, v in pairs(self.AllElements) do 
+            if LT[v.ID] then 
+                if v.Type == "Dropdown" then
+                    v.Instance.Text = "  " .. LT[v.ID] .. ": " .. (v.CurrentValue or "None")
+                else
+                    v.Instance.Text = LT[v.ID]
+                end
+            end 
+        end
     end
 
     local TabBorder = Instance.new("Frame", MainFrame); TabBorder.Size = UDim2.new(0, 115, 1, -85); TabBorder.Position = UDim2.new(0, 10, 0, 50); TabBorder.BackgroundColor3 = Color3.fromRGB(12, 12, 12); Instance.new("UICorner", TabBorder); Instance.new("UIStroke", TabBorder).Color = Color3.fromRGB(255, 255, 255)
