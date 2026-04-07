@@ -1,5 +1,5 @@
--- [[ Swift Hub X - WHITE BORDER EDITION ]]
--- [[ Border: 3.5 (Fixed White) | Rainbow Support | Redesigned by Pai ]]
+-- [[ Swift Hub X - ULTIMATE WHITE BORDER FIXED ]]
+-- [[ Border: 3.5 (Strict White) | Rainbow Loop | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_WhiteBorder"
+    ScreenGui.Name = "SwiftHubX_WhiteBorderFixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -24,10 +24,10 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- [[ ขอบเส้นหนา สีขาวถาวร ]]
+    -- [[ ขอบเส้นหนา สีขาวถาวร (ห้ามเปลี่ยน) ]]
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Thickness = 3.5
-    MainStroke.Color = Color3.fromRGB(255, 255, 255) -- ล็อคสีขาว
+    MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
     -- ปุ่มลอย S
@@ -43,9 +43,9 @@ function Library:CreateWindow(Settings)
     
     local BtnStroke = Instance.new("UIStroke", ToggleBtn)
     BtnStroke.Thickness = 2.5
-    BtnStroke.Color = Color3.fromRGB(255, 255, 255) -- ล็อคสีขาว
+    BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- Header & Icon
+    -- Header & Icon Eye
     local Header = Instance.new("Frame", MainFrame)
     Header.Size = UDim2.new(1, 0, 0, 40)
     Header.BackgroundTransparency = 1
@@ -99,6 +99,7 @@ function Library:CreateWindow(Settings)
     local WindowAPI = {}
     local RainbowConnection = nil
 
+    -- ฟังก์ชันแจ้งเตือน (Notify)
     function WindowAPI:Notify(Msg)
         local NotifFrame = Instance.new("Frame", ScreenGui)
         NotifFrame.Size = UDim2.new(0, 200, 0, 40)
@@ -120,26 +121,34 @@ function Library:CreateWindow(Settings)
         task.wait(0.5); NotifFrame:Destroy()
     end
 
+    -- แก้ไข: ตัดคำสั่งเปลี่ยนสี Stroke ออกทั้งหมด
     function WindowAPI:SetColor(NewColor)
         if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
         local TI = TweenInfo.new(0.5, Enum.EasingStyle.Quart)
         TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play()
         TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
-        -- ลบการเปลี่ยนสี MainStroke ออกเพื่อให้เป็นสีขาวตลอดค้าบ
+        -- ล็อคสีขาวให้ MainStroke และ BtnStroke เสมอ
+        MainStroke.Color = Color3.fromRGB(255, 255, 255)
+        BtnStroke.Color = Color3.fromRGB(255, 255, 255)
     end
 
+    -- แก้ไข: ตัดคำสั่งเปลี่ยนสี Stroke ออกจากลูป Rainbow
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
+        -- คืนค่าสีขอบเป็นขาวก่อนเริ่มลูป
+        MainStroke.Color = Color3.fromRGB(255, 255, 255)
+        BtnStroke.Color = Color3.fromRGB(255, 255, 255)
+        
         RainbowConnection = RunService.RenderStepped:Connect(function()
             local Hue = tick() % 5 / 5
             local Color = Color3.fromHSV(Hue, 0.8, 1)
             MainFrame.BackgroundColor3 = Color
             ToggleBtn.BackgroundColor3 = Color
-            -- ลบการเปลี่ยนสี MainStroke ออกเพื่อให้เป็นสีขาวตลอดค้าบ
+            -- ไม่มีการเปลี่ยนสี Stroke ในนี้แล้ว
         end)
     end
 
-    -- Tab System
+    -- Tab & UI Element Logic (Sidebar & Content)
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 110, 1, -80); TabContainer.Position = UDim2.new(0, 12, 0, 50)
     TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
