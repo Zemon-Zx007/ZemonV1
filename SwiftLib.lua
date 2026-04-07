@@ -1,5 +1,5 @@
--- [[ Swift Hub X - MULTI-LANGUAGE EDITION ]]
--- [[ Border: 3.5 (Fixed White) | SVG Eye-Fix | Language System | Redesigned by Pai ]]
+-- [[ Swift Hub X - ANIMATED LANGUAGE EDITION ]]
+-- [[ Border: 3.5 (Fixed White) | SVG Eye-Fix | Language Animation | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_LanguageSystem"
+    ScreenGui.Name = "SwiftHubX_Animated"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -42,8 +42,8 @@ function Library:CreateWindow(Settings)
     Header.Size = UDim2.new(1, 0, 0, 40); Header.BackgroundTransparency = 1
     local TitleLabel = Instance.new("TextLabel", Header)
     TitleLabel.Text = "   " .. Title; TitleLabel.Size = UDim2.new(1, -50, 1, 0)
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255); TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 15; TitleLabel.TextXAlignment = Enum.TextXAlignment.Left; TitleLabel.BackgroundTransparency = 1
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255); TitleLabel.Font = Enum.Font.GothamBold; TitleLabel.TextSize = 15
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left; TitleLabel.BackgroundTransparency = 1
 
     -- ปุ่มตา SVG
     local EyeBtn = Instance.new("ImageButton", Header)
@@ -51,7 +51,7 @@ function Library:CreateWindow(Settings)
     EyeBtn.BackgroundTransparency = 1; EyeBtn.Image = "rbxassetid://10709810534"
     EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
 
-    -- Drag & Toggle Logic
+    -- Drag System
     local function MakeDraggable(frame)
         local dragging, dragInput, dragStart, startPos
         frame.InputBegan:Connect(function(input)
@@ -69,8 +69,9 @@ function Library:CreateWindow(Settings)
         end)
     end
     MakeDraggable(MainFrame); MakeDraggable(ToggleBtn)
+
     ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-    
+
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
@@ -81,11 +82,24 @@ function Library:CreateWindow(Settings)
         EyeBtn.ImageTransparency = 0
     end)
 
-    -- [[ API & Language Tables ]]
     local WindowAPI = {}
     local RainbowConnection = nil
-    local AllElements = {} -- เก็บ Element ทั้งหมดไว้เปลี่ยนภาษา
-    local AllTabs = {} -- เก็บ Tab ทั้งหมดไว้เปลี่ยนภาษา
+    local AllElements = {}
+    local AllTabs = {}
+
+    -- [[ ฟังก์ชันสำหรับอนิเมชั่นข้อความ ]]
+    local function AnimateText(label, newText)
+        local TI = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+        -- Fade Out
+        local fadeOut = TweenService:Create(label, TI, {TextTransparency = 1})
+        fadeOut:Play()
+        fadeOut.Completed:Wait()
+        -- Change Text
+        label.Text = newText
+        -- Fade In
+        local fadeIn = TweenService:Create(label, TI, {TextTransparency = 0})
+        fadeIn:Play()
+    end
 
     function WindowAPI:Notify(Msg)
         local NotifFrame = Instance.new("Frame", ScreenGui)
@@ -116,22 +130,19 @@ function Library:CreateWindow(Settings)
         end)
     end
 
-    -- [[ ส่วนแก้ไข: ระบบเปลี่ยนภาษา ]]
+    -- [[ ระบบเปลี่ยนภาษาแบบ Animated ]]
     function WindowAPI:ChangeLanguage(LangTable)
-        -- เปลี่ยนชื่อ Tab
+        -- อนิเมชั่น Tab
         for _, tabData in pairs(AllTabs) do
             if LangTable[tabData.ID] then
-                tabData.Instance.Text = LangTable[tabData.ID]
+                task.spawn(function() AnimateText(tabData.Instance, LangTable[tabData.ID]) end)
             end
         end
-        -- เปลี่ยนข้อความในปุ่ม/ดรอปดาวน์
+        -- อนิเมชั่น Elements
         for _, element in pairs(AllElements) do
             if LangTable[element.ID] then
-                if element.Type == "Button" then
-                    element.Instance.Text = LangTable[element.ID]
-                elseif element.Type == "Dropdown" then
-                    element.Instance.Text = "  " .. LangTable[element.ID] .. ": " .. element.CurrentValue
-                end
+                local finalTxt = element.Type == "Dropdown" and "  " .. LangTable[element.ID] .. ": " .. element.CurrentValue or LangTable[element.ID]
+                task.spawn(function() AnimateText(element.Instance, finalTxt) end)
             end
         end
     end
@@ -153,7 +164,6 @@ function Library:CreateWindow(Settings)
         TabBtn.Size = UDim2.new(1, 0, 0, 32); TabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
         TabBtn.Text = TabName; TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150); TabBtn.Font = Enum.Font.Gotham
         Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
-        
         table.insert(AllTabs, {Instance = TabBtn, ID = TabID})
 
         local Page = Instance.new("ScrollingFrame", ContentHolder)
@@ -202,7 +212,9 @@ function Library:CreateWindow(Settings)
                 Instance.new("UICorner", DF).CornerRadius = UDim.new(0, 8)
 
                 D.MouseButton1Click:Connect(function()
-                    DF.Visible = not DF.Visible; DF.Size = DF.Visible and UDim2.new(1, 0, 0, #List * 30) or UDim2.new(1, 0, 0, 0)
+                    DF.Visible = not DF.Visible
+                    local targetSize = DF.Visible and UDim2.new(1, 0, 0, #List * 30) or UDim2.new(1, 0, 0, 0)
+                    TweenService:Create(DF, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Size = targetSize}):Play()
                 end)
                 for _, v in pairs(List) do
                     local O = Instance.new("TextButton", DF)
@@ -210,7 +222,7 @@ function Library:CreateWindow(Settings)
                     O.TextColor3 = Color3.fromRGB(180, 180, 180); O.Font = Enum.Font.Gotham
                     O.MouseButton1Click:Connect(function()
                         currentVal = v; dropdownData.CurrentValue = v
-                        D.Text = "  " .. (LangTable and LangTable[ElementID] or Txt) .. ": " .. v
+                        D.Text = "  " .. Txt .. ": " .. v
                         DF.Visible = false; DF.Size = UDim2.new(1, 0, 0, 0); Call(v)
                     end)
                 end
