@@ -1,4 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL LIBRARY V3.6 (Ultimate + Eye + Rainbow Box) ]]
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.3 (Auto-Resize CodeBox) ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 function Library:CreateWindow(Settings)
     local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-    ScreenGui.Name = "SwiftHubX_Fixed_V3.6"; ScreenGui.ResetOnSpawn = false
+    ScreenGui.Name = "SwiftHubX_Fixed_V4.3"; ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -106,10 +106,11 @@ function Library:CreateWindow(Settings)
                 end
             end
             function Sub:CreateCodeBox()
-                local Box = Instance.new("Frame", H); Box.Size = UDim2.new(1, 0, 0, 100); Box.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Instance.new("UICorner", Box); local BS = Instance.new("UIStroke", Box); BS.Thickness = 2.5
+                local Box = Instance.new("Frame", H); Box.Size = UDim2.new(1, 0, 0, 0); Box.AutomaticSize = Enum.AutomaticSize.Y; Box.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Instance.new("UICorner", Box); local BS = Instance.new("UIStroke", Box); BS.Thickness = 2.5
                 RunService.RenderStepped:Connect(function() BS.Color = Color3.fromHSV(tick() % 4 / 4, 1, 1) end)
                 table.insert(WindowAPI.CodeBoxes, Box)
-                local txt = Instance.new("TextLabel", Box); txt.Size = UDim2.new(1, -20, 1, -20); txt.Position = UDim2.new(0, 10, 0, 10); txt.BackgroundTransparency = 1; txt.TextColor3 = Color3.fromRGB(0, 255, 150); txt.Font = Enum.Font.Code; txt.TextSize = 13; txt.TextXAlignment = 0; txt.TextYAlignment = 0; txt.RichText = true; txt.Text = "⏳ Loading Data..."
+                local txt = Instance.new("TextLabel", Box); txt.Size = UDim2.new(1, -20, 0, 0); txt.AutomaticSize = Enum.AutomaticSize.Y; txt.Position = UDim2.new(0, 10, 0, 10); txt.BackgroundTransparency = 1; txt.TextColor3 = Color3.fromRGB(0, 255, 150); txt.Font = Enum.Font.Code; txt.TextSize = 13; txt.TextXAlignment = 0; txt.TextYAlignment = 0; txt.RichText = true; txt.TextWrapped = true; txt.Text = "⏳ Loading Data..."
+                local UIPadding = Instance.new("UIPadding", Box); UIPadding.PaddingBottom = UDim.new(0, 10)
                 return {SetText = function(self, val) txt.Text = tostring(val) end}
             end
             return Sub
