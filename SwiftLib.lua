@@ -1,5 +1,5 @@
--- [[ Swift Hub X - Fixed Rejoin Bug ]]
--- [[ Size: 420 x 340 | Redesigned by Pai ]]
+-- [[ Swift Hub X - FIXED REJOIN BUG V2 ]]
+-- [[ Redesigned by Pai for Zemon ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -10,7 +10,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_Fixed"
+    ScreenGui.Name = "SwiftHubX_FinalFixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -22,6 +22,7 @@ function Library:CreateWindow(Settings)
     MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
     MainFrame.Size = UDim2.new(0, 420, 0, 340)
     MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = true
     
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 12)
@@ -68,7 +69,7 @@ function Library:CreateWindow(Settings)
         MainFrame.Visible = not MainFrame.Visible
     end)
 
-    -- Sidebar & Content
+    -- Sidebar
     local Sidebar = Instance.new("Frame")
     Sidebar.Parent = MainFrame
     Sidebar.BackgroundTransparency = 1
@@ -82,6 +83,7 @@ function Library:CreateWindow(Settings)
     TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 5)
 
+    -- Content
     local ContentHolder = Instance.new("Frame")
     ContentHolder.Parent = MainFrame
     ContentHolder.Position = UDim2.new(0, 135, 0, 45)
@@ -89,6 +91,8 @@ function Library:CreateWindow(Settings)
     ContentHolder.BackgroundTransparency = 1
 
     local Tabs = {}
+    local firstTab = true
+
     function Tabs:CreateTab(TabName)
         local TabButton = Instance.new("TextButton")
         TabButton.Parent = TabContainer
@@ -103,13 +107,18 @@ function Library:CreateWindow(Settings)
         Page.Parent = ContentHolder
         Page.Size = UDim2.new(1, 0, 1, 0)
         Page.BackgroundTransparency = 1
-        Page.Visible = false
+        Page.Visible = firstTab -- ให้โชว์แค่หน้าแรกตอนโหลด
         Page.ScrollBarThickness = 1
         local PageLayout = Instance.new("UIListLayout", Page)
         PageLayout.Padding = UDim.new(0, 8)
 
+        if firstTab then
+            TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            firstTab = false
+        end
+
         TabButton.MouseButton1Click:Connect(function()
-            for _, v in pairs(ContentHolder:GetChildren()) do v.Visible = false end
+            for _, v in pairs(ContentHolder:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
             for _, btn in pairs(TabContainer:GetChildren()) do if btn:IsA("TextButton") then btn.TextColor3 = Color3.fromRGB(150, 150, 150) end end
             Page.Visible = true
             TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -129,7 +138,7 @@ function Library:CreateWindow(Settings)
             SecTitle.Size = UDim2.new(1, 0, 1, 0)
             SecTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
             SecTitle.Font = Enum.Font.GothamBold
-            SecTitle.TextSize = 12
+            SecTitle.TextSize = 11
             SecTitle.TextXAlignment = Enum.TextXAlignment.Left
             SecTitle.BackgroundTransparency = 1
 
@@ -150,9 +159,9 @@ function Library:CreateWindow(Settings)
                 B.TextColor3 = Color3.fromRGB(255, 255, 255)
                 B.Font = Enum.Font.GothamSemibold
                 Instance.new("UICorner", B).CornerRadius = UDim.new(0, 5)
-                -- *** แก้ไขจุดนี้: ให้เรียก Callback เฉพาะตอนกดปุ่มเท่านั้น ***
+                
                 B.MouseButton1Click:Connect(function()
-                    Callback()
+                    if Callback then Callback() end
                 end)
             end
 
@@ -177,13 +186,14 @@ function Library:CreateWindow(Settings)
                 T.MouseButton1Click:Connect(function()
                     State = not State
                     TweenService:Create(Ind, TweenInfo.new(0.2), {BackgroundColor3 = State and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(60, 60, 60)}):Play()
-                    Callback(State)
+                    if Callback then Callback(State) end
                 end)
             end
             return Sub
         end
         return Elements
     end
+    -- *** ลบคำสั่ง .Fire() ที่ทำให้รันเองออกไปแล้วค้าบ ***
     return Tabs
 end
 
