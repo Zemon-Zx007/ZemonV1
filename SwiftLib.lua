@@ -1,4 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.4 (Full Language Support) ]]
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.5 (Config Support) ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 function Library:CreateWindow(Settings)
     local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-    ScreenGui.Name = "SwiftHubX_V4.4"; ScreenGui.ResetOnSpawn = false
+    ScreenGui.Name = "SwiftHubX_V4.5"; ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -60,16 +60,13 @@ function Library:CreateWindow(Settings)
     function WindowAPI:SetColor(C) if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end; MainFrame.BackgroundColor3 = C; ToggleBtn.BackgroundColor3 = C end
     function WindowAPI:SetRainbow() if RainbowConnection then RainbowConnection:Disconnect() end; RainbowConnection = RunService.RenderStepped:Connect(function() local C = Color3.fromHSV(tick() % 5 / 5, 0.8, 1); MainFrame.BackgroundColor3 = C; ToggleBtn.BackgroundColor3 = C end) end
 
-    -- [[ ฟังก์ชันอัปเดตภาษาแบบ Real-time ]]
     function WindowAPI:ChangeLanguage(LT)
         for _, v in pairs(self.AllTabs) do if LT[v.ID] then v.Instance.Text = LT[v.ID] end end
         for _, v in pairs(self.AllElements) do 
             if LT[v.ID] then 
-                if v.Type == "Dropdown" then
-                    v.Instance.Text = "  " .. LT[v.ID] .. ": " .. (v.CurrentValue or "None")
-                else
-                    v.Instance.Text = LT[v.ID]
-                end
+                if v.Type == "Dropdown" then v.Instance.Text = "  " .. LT[v.ID] .. ": " .. (v.CurrentValue or "None")
+                elseif v.Type == "TextBox" then v.Instance.PlaceholderText = LT[v.ID]
+                else v.Instance.Text = LT[v.ID] end
             end 
         end
     end
@@ -95,15 +92,25 @@ function Library:CreateWindow(Settings)
                 local btn = Instance.new("TextButton", H); btn.Size = UDim2.new(1, 0, 0, 35); btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btn.Text = T; btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamSemibold; Instance.new("UICorner", btn)
                 btn.MouseButton1Click:Connect(function() if C then C() end end); table.insert(WindowAPI.AllElements, {Instance = btn, ID = EID, Type = "Button"})
             end
+            function Sub:CreateTextBox(PH, EID, C)
+                local box = Instance.new("TextBox", H); box.Size = UDim2.new(1, 0, 0, 35); box.BackgroundColor3 = Color3.fromRGB(20, 20, 20); box.PlaceholderText = PH; box.Text = ""; box.TextColor3 = Color3.fromRGB(255, 255, 255); box.Font = Enum.Font.Gotham; box.PlaceholderColor3 = Color3.fromRGB(100, 100, 100); Instance.new("UICorner", box)
+                box.FocusLost:Connect(function() if C then C(box.Text) end end); table.insert(WindowAPI.AllElements, {Instance = box, ID = EID, Type = "TextBox"})
+                return box
+            end
             function Sub:CreateDropdown(T, EID, L, C)
                 local d = Instance.new("TextButton", H); d.Size = UDim2.new(1, 0, 0, 35); d.BackgroundColor3 = Color3.fromRGB(22, 22, 22); d.Text = "  " .. T .. ": None"; d.TextColor3 = Color3.fromRGB(200, 200, 200); d.TextXAlignment = 0; Instance.new("UICorner", d)
                 local data = {Instance = d, ID = EID, Type = "Dropdown", CurrentValue = "None"}; table.insert(WindowAPI.AllElements, data)
                 local df = Instance.new("Frame", H); df.Size = UDim2.new(1, 0, 0, 0); df.Visible = false; df.ClipsDescendants = true; df.BackgroundColor3 = Color3.fromRGB(18, 18, 18); Instance.new("UIListLayout", df)
-                d.MouseButton1Click:Connect(function() df.Visible = not df.Visible; df.Size = df.Visible and UDim2.new(1, 0, 0, #L * 30) or UDim2.new(1, 0, 0, 0) end)
-                for _, v in pairs(L) do
-                    local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
-                    o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); if C then C(v) end end)
+                local function UpdateList(NewL)
+                    for _, child in pairs(df:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+                    for _, v in pairs(NewL) do
+                        local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
+                        o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); if C then C(v) end end)
+                    end
                 end
+                UpdateList(L)
+                d.MouseButton1Click:Connect(function() df.Visible = not df.Visible; df.Size = df.Visible and UDim2.new(1, 0, 0, math.min(#df:GetChildren() * 30, 120)) or UDim2.new(1, 0, 0, 0) end)
+                return {Refresh = function(self, NewL) UpdateList(NewL) end}
             end
             function Sub:CreateCodeBox()
                 local Box = Instance.new("Frame", H); Box.Size = UDim2.new(1, 0, 0, 0); Box.AutomaticSize = Enum.AutomaticSize.Y; Box.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Instance.new("UICorner", Box); local BS = Instance.new("UIStroke", Box); BS.Thickness = 2.5
