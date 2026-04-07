@@ -1,5 +1,5 @@
--- [[ Swift Hub X - FULL COLOR & RAINBOW EDITION ]]
--- [[ Border: 3.5 | Rainbow Support | Redesigned by Pai ]]
+-- [[ Swift Hub X - RAINBOW FIXED VERSION ]]
+-- [[ Border: 3.5 | Professional UI | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_FullEdition"
+    ScreenGui.Name = "SwiftHubX_RainbowFixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -24,13 +24,13 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- [[ ขอบเส้นหนาชัดเจน ]]
+    -- ขอบเส้นใหญ่ชัดเจน
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Thickness = 3.5
     MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- [[ ปุ่มลอย S ]]
+    -- ปุ่มลอย S
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
     ToggleBtn.Size = UDim2.new(0, 55, 0, 55)
     ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
@@ -45,7 +45,7 @@ function Library:CreateWindow(Settings)
     BtnStroke.Thickness = 2.5
     BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- Header & Eye Icon
+    -- Header & Icon
     local Header = Instance.new("Frame", MainFrame)
     Header.Size = UDim2.new(1, 0, 0, 40)
     Header.BackgroundTransparency = 1
@@ -88,7 +88,6 @@ function Library:CreateWindow(Settings)
 
     ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-    -- Transparency System
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
@@ -97,10 +96,26 @@ function Library:CreateWindow(Settings)
         TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
     end)
 
+    -- [[ API สำหรับส่งออก ]]
     local WindowAPI = {}
     local RainbowConnection = nil
 
-    -- [[ Function: Set Color ]]
+    -- ฟังก์ชันแจ้งเตือน (Notify)
+    function WindowAPI:Notify(Msg)
+        local NotifFrame = Instance.new("Frame", ScreenGui)
+        NotifFrame.Size = UDim2.new(0, 200, 0, 40)
+        NotifFrame.Position = UDim2.new(1, 10, 1, -50)
+        NotifFrame.BackgroundColor3 = MainFrame.BackgroundColor3
+        NotifFrame.BackgroundTransparency = MainFrame.BackgroundTransparency
+        Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 10)
+        local NotifText = Instance.new("TextLabel", NotifFrame)
+        NotifText.Text = Msg; NotifText.Size = UDim2.new(1, 0, 1, 0); NotifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NotifText.Font = Enum.Font.GothamSemibold; NotifText.BackgroundTransparency = 1
+        NotifFrame:TweenPosition(UDim2.new(1, -210, 1, -50), "Out", "Quart", 0.5, true)
+        task.wait(3); NotifFrame:TweenPosition(UDim2.new(1, 10, 1, -50), "In", "Quart", 0.5, true)
+        task.wait(0.5); NotifFrame:Destroy()
+    end
+
     function WindowAPI:SetColor(NewColor)
         if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
         local TI = TweenInfo.new(0.5, Enum.EasingStyle.Quart)
@@ -110,7 +125,7 @@ function Library:CreateWindow(Settings)
         TweenService:Create(BtnStroke, TI, {Color = NewColor}):Play()
     end
 
-    -- [[ Function: Set Rainbow ]]
+    -- *** แก้ไขตรงนี้: เพิ่มฟังก์ชัน SetRainbow เข้าไปใน API ตารางส่งออก ***
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
         RainbowConnection = RunService.RenderStepped:Connect(function()
@@ -123,7 +138,7 @@ function Library:CreateWindow(Settings)
         end)
     end
 
-    -- Tab & Section System
+    -- Tab & UI Logic อื่นๆ
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 110, 1, -80); TabContainer.Position = UDim2.new(0, 12, 0, 50)
     TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
@@ -141,8 +156,7 @@ function Library:CreateWindow(Settings)
         Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
 
         local Page = Instance.new("ScrollingFrame", ContentHolder)
-        Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = firstTab
-        Page.ScrollBarThickness = 0
+        Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = firstTab; Page.ScrollBarThickness = 0
         Instance.new("UIListLayout", Page).Padding = UDim.new(0, 10)
 
         if firstTab then TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255); firstTab = false end
@@ -173,16 +187,13 @@ function Library:CreateWindow(Settings)
                 D.Size = UDim2.new(1, 0, 0, 35); D.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
                 D.Text = "  " .. Txt .. ": None"; D.TextColor3 = Color3.fromRGB(200, 200, 200)
                 D.TextXAlignment = Enum.TextXAlignment.Left; Instance.new("UICorner", D).CornerRadius = UDim.new(0, 8)
-
                 local DF = Instance.new("Frame", Holder)
                 DF.Size = UDim2.new(1, 0, 0, 0); DF.Visible = false; DF.ClipsDescendants = true
                 DF.BackgroundColor3 = Color3.fromRGB(20, 20, 20); Instance.new("UIListLayout", DF)
                 Instance.new("UICorner", DF).CornerRadius = UDim.new(0, 8)
-
                 D.MouseButton1Click:Connect(function()
                     DF.Visible = not DF.Visible; DF.Size = DF.Visible and UDim2.new(1, 0, 0, #List * 30) or UDim2.new(1, 0, 0, 0)
                 end)
-
                 for _, v in pairs(List) do
                     local O = Instance.new("TextButton", DF)
                     O.Size = UDim2.new(1, 0, 0, 30); O.BackgroundTransparency = 1; O.Text = v
