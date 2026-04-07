@@ -1,5 +1,5 @@
--- [[ Swift Hub X - THE PERFECT FINAL EDITION ]]
--- [[ Features: Separate Borders, Full Transparency, Delayed Lang, Fixed Colors ]]
+-- [[ Swift Hub X - ULTIMATE TOGGLE & ALL FEATURES FIXED ]]
+-- [[ Fixed: Toggle Button, Transparency, Language Delay, 9 Themes ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_Perfect_Final"
+    ScreenGui.Name = "SwiftHubX_Final_Fixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -28,14 +28,20 @@ function Library:CreateWindow(Settings)
     MainStroke.Thickness = 3.5; MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- [[ Floating Button S ]]
+    -- [[ Floating Button S (Fixed Toggle) ]]
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
+    ToggleBtn.Name = "ToggleButton"
     ToggleBtn.Size = UDim2.new(0, 55, 0, 55); ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15); ToggleBtn.Text = "S"
     ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); ToggleBtn.Font = Enum.Font.GothamBold; ToggleBtn.TextSize = 24
     Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
     local BtnStroke = Instance.new("UIStroke", ToggleBtn)
     BtnStroke.Thickness = 2.5; BtnStroke.Color = Color3.fromRGB(255, 255, 255)
+
+    -- *** แก้ไขจุดนี้: ระบบเปิด-ปิด UI ***
+    ToggleBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
 
     -- [[ Separate Borders ]]
     local TabBorder = Instance.new("Frame", MainFrame)
@@ -71,7 +77,7 @@ function Library:CreateWindow(Settings)
     local AllElements = {}
     local AllTabs = {}
 
-    -- [[ Transparency System (Fix: Multi-Border Support) ]]
+    -- [[ Transparency System ]]
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
@@ -100,20 +106,6 @@ function Library:CreateWindow(Settings)
             local Color = Color3.fromHSV(tick() % 5 / 5, 0.8, 1)
             MainFrame.BackgroundColor3 = Color; ToggleBtn.BackgroundColor3 = Color
         end)
-    end
-
-    function WindowAPI:Notify(Msg)
-        local NotifFrame = Instance.new("Frame", ScreenGui)
-        NotifFrame.Size = UDim2.new(0, 200, 0, 40); NotifFrame.Position = UDim2.new(1, 10, 1, -50)
-        NotifFrame.BackgroundColor3 = MainFrame.BackgroundColor3; Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 10)
-        local NotifStroke = Instance.new("UIStroke", NotifFrame)
-        NotifStroke.Thickness = 2; NotifStroke.Color = Color3.fromRGB(255, 255, 255)
-        local NotifText = Instance.new("TextLabel", NotifFrame)
-        NotifText.Text = Msg; NotifText.Size = UDim2.new(1, 0, 1, 0); NotifText.TextColor3 = Color3.fromRGB(255, 255, 255)
-        NotifText.Font = Enum.Font.GothamSemibold; NotifText.BackgroundTransparency = 1
-        NotifFrame:TweenPosition(UDim2.new(1, -210, 1, -50), "Out", "Quart", 0.5, true)
-        task.wait(3); NotifFrame:TweenPosition(UDim2.new(1, 10, 1, -50), "In", "Quart", 0.5, true)
-        task.wait(0.5); NotifFrame:Destroy()
     end
 
     function WindowAPI:ChangeLanguage(LangTable)
