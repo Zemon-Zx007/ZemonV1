@@ -1,5 +1,5 @@
--- [[ Swift Hub X - SVG EYE-FIX EDITION ]]
--- [[ Border: 3.5 (Fixed White) | Fixed Eye Transparency | Redesigned by Pai ]]
+-- [[ Swift Hub X - MULTI-LANGUAGE EDITION ]]
+-- [[ Border: 3.5 (Fixed White) | SVG Eye-Fix | Language System | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_EyeFixed"
+    ScreenGui.Name = "SwiftHubX_LanguageSystem"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -24,52 +24,34 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- ขอบเส้นสีขาวถาวร
     local MainStroke = Instance.new("UIStroke", MainFrame)
-    MainStroke.Thickness = 3.5
-    MainStroke.Color = Color3.fromRGB(255, 255, 255)
+    MainStroke.Thickness = 3.5; MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
     -- ปุ่มลอย S
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
-    ToggleBtn.Size = UDim2.new(0, 55, 0, 55)
-    ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
-    ToggleBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    ToggleBtn.Text = "S"
-    ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleBtn.Font = Enum.Font.GothamBold
-    ToggleBtn.TextSize = 24
+    ToggleBtn.Size = UDim2.new(0, 55, 0, 55); ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15); ToggleBtn.Text = "S"
+    ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); ToggleBtn.Font = Enum.Font.GothamBold; ToggleBtn.TextSize = 24
     Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
-    
     local BtnStroke = Instance.new("UIStroke", ToggleBtn)
-    BtnStroke.Thickness = 2.5
-    BtnStroke.Color = Color3.fromRGB(255, 255, 255)
+    BtnStroke.Thickness = 2.5; BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
     -- Header
     local Header = Instance.new("Frame", MainFrame)
-    Header.Size = UDim2.new(1, 0, 0, 40)
-    Header.BackgroundTransparency = 1
-
+    Header.Size = UDim2.new(1, 0, 0, 40); Header.BackgroundTransparency = 1
     local TitleLabel = Instance.new("TextLabel", Header)
-    TitleLabel.Text = "   " .. Title
-    TitleLabel.Size = UDim2.new(1, -50, 1, 0)
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 15
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = "   " .. Title; TitleLabel.Size = UDim2.new(1, -50, 1, 0)
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255); TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextSize = 15; TitleLabel.TextXAlignment = Enum.TextXAlignment.Left; TitleLabel.BackgroundTransparency = 1
 
-    -- ไอคอน SVG (eye-off)
+    -- ปุ่มตา SVG
     local EyeBtn = Instance.new("ImageButton", Header)
-    EyeBtn.Name = "EyeIcon"
-    EyeBtn.Size = UDim2.new(0, 24, 0, 24)
-    EyeBtn.Position = UDim2.new(1, -35, 0.5, -12)
-    EyeBtn.BackgroundTransparency = 1
-    EyeBtn.Image = "rbxassetid://10709810534" -- eye
+    EyeBtn.Size = UDim2.new(0, 24, 0, 24); EyeBtn.Position = UDim2.new(1, -35, 0.5, -12)
+    EyeBtn.BackgroundTransparency = 1; EyeBtn.Image = "rbxassetid://10709810534"
     EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    EyeBtn.ZIndex = 10 -- ให้มั่นใจว่าอยู่บนสุด
 
-    -- Drag System
+    -- Drag & Toggle Logic
     local function MakeDraggable(frame)
         local dragging, dragInput, dragStart, startPos
         frame.InputBegan:Connect(function(input)
@@ -87,33 +69,27 @@ function Library:CreateWindow(Settings)
         end)
     end
     MakeDraggable(MainFrame); MakeDraggable(ToggleBtn)
-
     ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-
-    -- [[ ส่วนแก้ไข: ล็อคความชัดของไอคอน ]]
+    
     local isTransparent = false
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
-        local targetTransparency = isTransparent and 0.5 or 0
-        
-        -- สลับรูปไอคอน
+        local targetT = isTransparent and 0.5 or 0
         EyeBtn.Image = isTransparent and "rbxassetid://10709810723" or "rbxassetid://10709810534"
-        
-        -- ลดแค่ BackgroundTransparency แต่ห้ามลด ImageTransparency ของปุ่มตา
-        TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetTransparency}):Play()
-        TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetTransparency}):Play()
-        
-        -- บังคับให้ไอคอนรูปตายังคงความชัด 100% (0 คือทึบ)
-        EyeBtn.ImageTransparency = 0 
+        TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
+        TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
+        EyeBtn.ImageTransparency = 0
     end)
 
+    -- [[ API & Language Tables ]]
     local WindowAPI = {}
     local RainbowConnection = nil
+    local AllElements = {} -- เก็บ Element ทั้งหมดไว้เปลี่ยนภาษา
+    local AllTabs = {} -- เก็บ Tab ทั้งหมดไว้เปลี่ยนภาษา
 
     function WindowAPI:Notify(Msg)
         local NotifFrame = Instance.new("Frame", ScreenGui)
-        NotifFrame.Size = UDim2.new(0, 200, 0, 40)
-        NotifFrame.Position = UDim2.new(1, 10, 1, -50)
+        NotifFrame.Size = UDim2.new(0, 200, 0, 40); NotifFrame.Position = UDim2.new(1, 10, 1, -50)
         NotifFrame.BackgroundColor3 = MainFrame.BackgroundColor3
         Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 10)
         local NotifStroke = Instance.new("UIStroke", NotifFrame)
@@ -128,26 +104,39 @@ function Library:CreateWindow(Settings)
 
     function WindowAPI:SetColor(NewColor)
         if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
-        local TI = TweenInfo.new(0.5, Enum.EasingStyle.Quart)
-        TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play()
-        TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
-        MainStroke.Color = Color3.fromRGB(255, 255, 255)
-        BtnStroke.Color = Color3.fromRGB(255, 255, 255)
+        TweenService:Create(MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = NewColor}):Play()
+        TweenService:Create(ToggleBtn, TweenInfo.new(0.5), {BackgroundColor3 = NewColor}):Play()
     end
 
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
-        MainStroke.Color = Color3.fromRGB(255, 255, 255)
-        BtnStroke.Color = Color3.fromRGB(255, 255, 255)
         RainbowConnection = RunService.RenderStepped:Connect(function()
-            local Hue = tick() % 5 / 5
-            local Color = Color3.fromHSV(Hue, 0.8, 1)
-            MainFrame.BackgroundColor3 = Color
-            ToggleBtn.BackgroundColor3 = Color
+            local Color = Color3.fromHSV(tick() % 5 / 5, 0.8, 1)
+            MainFrame.BackgroundColor3 = Color; ToggleBtn.BackgroundColor3 = Color
         end)
     end
 
-    -- Tab System
+    -- [[ ส่วนแก้ไข: ระบบเปลี่ยนภาษา ]]
+    function WindowAPI:ChangeLanguage(LangTable)
+        -- เปลี่ยนชื่อ Tab
+        for _, tabData in pairs(AllTabs) do
+            if LangTable[tabData.ID] then
+                tabData.Instance.Text = LangTable[tabData.ID]
+            end
+        end
+        -- เปลี่ยนข้อความในปุ่ม/ดรอปดาวน์
+        for _, element in pairs(AllElements) do
+            if LangTable[element.ID] then
+                if element.Type == "Button" then
+                    element.Instance.Text = LangTable[element.ID]
+                elseif element.Type == "Dropdown" then
+                    element.Instance.Text = "  " .. LangTable[element.ID] .. ": " .. element.CurrentValue
+                end
+            end
+        end
+    end
+
+    -- UI Containers
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 110, 1, -80); TabContainer.Position = UDim2.new(0, 12, 0, 50)
     TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
@@ -158,11 +147,14 @@ function Library:CreateWindow(Settings)
     ContentHolder.BackgroundTransparency = 1
 
     local firstTab = true
-    function WindowAPI:CreateTab(TabName)
+    function WindowAPI:CreateTab(TabName, TabID)
+        local TabID = TabID or TabName
         local TabBtn = Instance.new("TextButton", TabContainer)
         TabBtn.Size = UDim2.new(1, 0, 0, 32); TabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
         TabBtn.Text = TabName; TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150); TabBtn.Font = Enum.Font.Gotham
         Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
+        
+        table.insert(AllTabs, {Instance = TabBtn, ID = TabID})
 
         local Page = Instance.new("ScrollingFrame", ContentHolder)
         Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = firstTab; Page.ScrollBarThickness = 0
@@ -182,22 +174,33 @@ function Library:CreateWindow(Settings)
             Holder.Size = UDim2.new(1, 0, 0, 0); Holder.AutomaticSize = Enum.AutomaticSize.Y; Holder.BackgroundTransparency = 1
             Instance.new("UIListLayout", Holder).Padding = UDim.new(0, 6)
             local Sub = {}
-            function Sub:CreateButton(Txt, Call)
+
+            function Sub:CreateButton(Txt, ElementID, Call)
+                local ElementID = ElementID or Txt
                 local B = Instance.new("TextButton", Holder)
                 B.Size = UDim2.new(1, 0, 0, 35); B.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
                 B.Text = Txt; B.TextColor3 = Color3.fromRGB(255, 255, 255); B.Font = Enum.Font.GothamSemibold
                 Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
                 B.MouseButton1Click:Connect(function() if Call then Call() end end)
+                table.insert(AllElements, {Instance = B, ID = ElementID, Type = "Button"})
             end
-            function Sub:CreateDropdown(Txt, List, Call)
+
+            function Sub:CreateDropdown(Txt, ElementID, List, Call)
+                local ElementID = ElementID or Txt
                 local D = Instance.new("TextButton", Holder)
                 D.Size = UDim2.new(1, 0, 0, 35); D.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
                 D.Text = "  " .. Txt .. ": None"; D.TextColor3 = Color3.fromRGB(200, 200, 200)
                 D.TextXAlignment = Enum.TextXAlignment.Left; Instance.new("UICorner", D).CornerRadius = UDim.new(0, 8)
+                
+                local currentVal = "None"
+                local dropdownData = {Instance = D, ID = ElementID, Type = "Dropdown", CurrentValue = currentVal}
+                table.insert(AllElements, dropdownData)
+
                 local DF = Instance.new("Frame", Holder)
                 DF.Size = UDim2.new(1, 0, 0, 0); DF.Visible = false; DF.ClipsDescendants = true
                 DF.BackgroundColor3 = Color3.fromRGB(20, 20, 20); Instance.new("UIListLayout", DF)
                 Instance.new("UICorner", DF).CornerRadius = UDim.new(0, 8)
+
                 D.MouseButton1Click:Connect(function()
                     DF.Visible = not DF.Visible; DF.Size = DF.Visible and UDim2.new(1, 0, 0, #List * 30) or UDim2.new(1, 0, 0, 0)
                 end)
@@ -206,7 +209,9 @@ function Library:CreateWindow(Settings)
                     O.Size = UDim2.new(1, 0, 0, 30); O.BackgroundTransparency = 1; O.Text = v
                     O.TextColor3 = Color3.fromRGB(180, 180, 180); O.Font = Enum.Font.Gotham
                     O.MouseButton1Click:Connect(function()
-                        D.Text = "  " .. Txt .. ": " .. v; DF.Visible = false; DF.Size = UDim2.new(1, 0, 0, 0); Call(v)
+                        currentVal = v; dropdownData.CurrentValue = v
+                        D.Text = "  " .. (LangTable and LangTable[ElementID] or Txt) .. ": " .. v
+                        DF.Visible = false; DF.Size = UDim2.new(1, 0, 0, 0); Call(v)
                     end)
                 end
             end
