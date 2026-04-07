@@ -1,3 +1,4 @@
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V3.4 (PERFECT FIX) ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -5,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 function Library:CreateWindow(Settings)
     local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-    ScreenGui.Name = "SwiftHubX_Fixed_V3.3"; ScreenGui.ResetOnSpawn = false
+    ScreenGui.Name = "SwiftHubX_Fixed_V3.4"; ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -38,7 +39,7 @@ function Library:CreateWindow(Settings)
     function WindowAPI:Notify(Msg)
         local f = Instance.new("Frame", ScreenGui); f.Size = UDim2.new(0, 220, 0, 45); f.Position = UDim2.new(1, 20, 1, -60); f.BackgroundColor3 = MainFrame.BackgroundColor3
         Instance.new("UICorner", f); Instance.new("UIStroke", f).Color = Color3.fromRGB(255,255,255)
-        local t = Instance.new("TextLabel", f); t.Text = Msg; t.Size = UDim2.new(1,0,1,0); t.TextColor3 = Color3.fromRGB(255,255,255); t.BackgroundTransparency = 1
+        local t = Instance.new("TextLabel", f); t.Text = Msg; t.Size = UDim2.new(1,0,1,0); t.TextColor3 = Color3.fromRGB(255,255,255); t.BackgroundTransparency = 1; t.Font = Enum.Font.GothamSemibold
         f:TweenPosition(UDim2.new(1, -240, 1, -60), "Out", "Quart", 0.5, true)
         task.delay(3, function() f:TweenPosition(UDim2.new(1, 20, 1, -60), "In", "Quart", 0.5, true); task.wait(0.5); f:Destroy() end)
     end
@@ -51,12 +52,27 @@ function Library:CreateWindow(Settings)
         for _, v in pairs(WindowAPI.AllElements) do if LT[v.ID] then v.Instance.Text = (v.Type == "Dropdown") and "  " .. LT[v.ID] .. ": " .. v.CurrentValue or LT[v.ID] end end
     end
 
-    local function drag(f)
-        local d, s, p; f.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then d = true; s = i.Position; p = f.Position end end)
-        UserInputService.InputChanged:Connect(function(i) if d and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then local del = i.Position - s; f.Position = UDim2.new(p.X.Scale, p.X.Offset + del.X, p.Y.Scale, p.Y.Offset + del.Y) end end)
-        UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then d = false end end)
+    -- [[ 🔥 ระบบ Drag ที่ปลอดภัยที่สุด 🔥 ]]
+    local dragging, dragInput, dragStart, startPos
+    local function updateDrag(input, frame)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
-    drag(MainFrame); drag(ToggleBtn)
+    local function applyDrag(frame)
+        frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true; dragStart = input.Position; startPos = frame.Position
+            end
+        end)
+        frame.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+        end)
+        frame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+        end)
+    end
+    applyDrag(MainFrame); applyDrag(ToggleBtn)
+    UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then updateDrag(input, MainFrame) end end)
 
     local TabContainer = Instance.new("ScrollingFrame", TabBorder); TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5); TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
     Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 6)
@@ -93,13 +109,22 @@ function Library:CreateWindow(Settings)
                     local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 30); o.BackgroundTransparency = 1; o.Text = v; o.TextColor3 = Color3.fromRGB(180, 180, 180)
                     o.MouseButton1Click:Connect(function() data.CurrentValue = v; d.Text = "  " .. T .. ": " .. v; df.Visible = false; df.Size = UDim2.new(1, 0, 0, 0); if C then C(v) end end)
                 end
-                return {GetSelected = function() return data.CurrentValue end}
             end
+            
+            -- [[ 🔥 Code Box อัปเกรดใหม่: ใส่ self แก้บัค Table 🔥 ]]
             function Sub:CreateCodeBox()
-                local Box = Instance.new("Frame", H); Box.Size = UDim2.new(1, 0, 0, 85); Box.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
-                Instance.new("UICorner", Box); table.insert(WindowAPI.CodeBoxes, Box)
-                local txt = Instance.new("TextLabel", Box); txt.Size = UDim2.new(1, -20, 1, -20); txt.Position = UDim2.new(0, 10, 0, 10); txt.BackgroundTransparency = 1; txt.TextColor3 = Color3.fromRGB(0, 255, 150); txt.Font = Enum.Font.Code; txt.TextSize = 14; txt.TextXAlignment = 0; txt.TextYAlignment = 0
-                return {SetText = function(v) txt.Text = tostring(v) end}
+                local Box = Instance.new("Frame", H); Box.Size = UDim2.new(1, 0, 0, 100); Box.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+                Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 8); Instance.new("UIStroke", Box).Color = Color3.fromRGB(50, 50, 50)
+                
+                local txt = Instance.new("TextLabel", Box); txt.Size = UDim2.new(1, -20, 1, -20); txt.Position = UDim2.new(0, 10, 0, 10)
+                txt.BackgroundTransparency = 1; txt.TextColor3 = Color3.fromRGB(0, 255, 150); txt.Font = Enum.Font.Code; txt.TextSize = 13
+                txt.TextXAlignment = 0; txt.TextYAlignment = 0; txt.RichText = true; txt.Text = "⏳ Loading Data..."
+                
+                local API = {}
+                function API:SetText(val) -- แก้แล้ว! ใช้ API:SetText(ข้อความ) ได้ชัวร์ๆ
+                    txt.Text = tostring(val)
+                end
+                return API
             end
             return Sub
         end
