@@ -1,5 +1,5 @@
--- [[ Swift Hub X - ULTIMATE WHITE BORDER FIXED ]]
--- [[ Border: 3.5 (Strict White) | Rainbow Loop | Redesigned by Pai ]]
+-- [[ Swift Hub X - SVG EYE-OFF EDITION ]]
+-- [[ Border: 3.5 (Fixed White) | SVG Icon Support | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_WhiteBorderFixed"
+    ScreenGui.Name = "SwiftHubX_SVG_Edition"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -24,7 +24,7 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- [[ ขอบเส้นหนา สีขาวถาวร (ห้ามเปลี่ยน) ]]
+    -- ขอบเส้นสีขาวถาวร
     local MainStroke = Instance.new("UIStroke", MainFrame)
     MainStroke.Thickness = 3.5
     MainStroke.Color = Color3.fromRGB(255, 255, 255)
@@ -45,7 +45,7 @@ function Library:CreateWindow(Settings)
     BtnStroke.Thickness = 2.5
     BtnStroke.Color = Color3.fromRGB(255, 255, 255)
 
-    -- Header & Icon Eye
+    -- Header
     local Header = Instance.new("Frame", MainFrame)
     Header.Size = UDim2.new(1, 0, 0, 40)
     Header.BackgroundTransparency = 1
@@ -59,13 +59,14 @@ function Library:CreateWindow(Settings)
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
     TitleLabel.BackgroundTransparency = 1
 
-    local EyeBtn = Instance.new("TextButton", Header)
-    EyeBtn.Text = "👁️"
-    EyeBtn.Size = UDim2.new(0, 35, 0, 35)
-    EyeBtn.Position = UDim2.new(1, -40, 0, 3)
+    -- [[ ส่วนแก้ไข: ใช้ไอคอน SVG (eye-off) ]]
+    local EyeBtn = Instance.new("ImageButton", Header)
+    EyeBtn.Name = "EyeIcon"
+    EyeBtn.Size = UDim2.new(0, 24, 0, 24) -- ขนาดไอคอน SVG มาตรฐาน
+    EyeBtn.Position = UDim2.new(1, -35, 0.5, -12)
     EyeBtn.BackgroundTransparency = 1
-    EyeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    EyeBtn.TextSize = 20
+    EyeBtn.Image = "rbxassetid://10709810534" -- ไอคอน SVG eye-off (Lucide Style)
+    EyeBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
 
     -- Drag System
     local function MakeDraggable(frame)
@@ -92,6 +93,8 @@ function Library:CreateWindow(Settings)
     EyeBtn.MouseButton1Click:Connect(function()
         isTransparent = not isTransparent
         local targetT = isTransparent and 0.5 or 0
+        -- เปลี่ยนรูปไอคอนตามสถานะ
+        EyeBtn.Image = isTransparent and "rbxassetid://10709810723" or "rbxassetid://10709810534"
         TweenService:Create(MainFrame, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
         TweenService:Create(ToggleBtn, TweenInfo.new(0.3), {BackgroundTransparency = targetT}):Play()
     end)
@@ -99,56 +102,44 @@ function Library:CreateWindow(Settings)
     local WindowAPI = {}
     local RainbowConnection = nil
 
-    -- ฟังก์ชันแจ้งเตือน (Notify)
     function WindowAPI:Notify(Msg)
         local NotifFrame = Instance.new("Frame", ScreenGui)
         NotifFrame.Size = UDim2.new(0, 200, 0, 40)
         NotifFrame.Position = UDim2.new(1, 10, 1, -50)
         NotifFrame.BackgroundColor3 = MainFrame.BackgroundColor3
-        NotifFrame.BackgroundTransparency = MainFrame.BackgroundTransparency
         Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 10)
-        
         local NotifStroke = Instance.new("UIStroke", NotifFrame)
-        NotifStroke.Thickness = 2
-        NotifStroke.Color = Color3.fromRGB(255, 255, 255)
-        
+        NotifStroke.Thickness = 2; NotifStroke.Color = Color3.fromRGB(255, 255, 255)
         local NotifText = Instance.new("TextLabel", NotifFrame)
         NotifText.Text = Msg; NotifText.Size = UDim2.new(1, 0, 1, 0); NotifText.TextColor3 = Color3.fromRGB(255, 255, 255)
         NotifText.Font = Enum.Font.GothamSemibold; NotifText.BackgroundTransparency = 1
-        
         NotifFrame:TweenPosition(UDim2.new(1, -210, 1, -50), "Out", "Quart", 0.5, true)
         task.wait(3); NotifFrame:TweenPosition(UDim2.new(1, 10, 1, -50), "In", "Quart", 0.5, true)
         task.wait(0.5); NotifFrame:Destroy()
     end
 
-    -- แก้ไข: ตัดคำสั่งเปลี่ยนสี Stroke ออกทั้งหมด
     function WindowAPI:SetColor(NewColor)
         if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
         local TI = TweenInfo.new(0.5, Enum.EasingStyle.Quart)
         TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play()
         TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
-        -- ล็อคสีขาวให้ MainStroke และ BtnStroke เสมอ
         MainStroke.Color = Color3.fromRGB(255, 255, 255)
         BtnStroke.Color = Color3.fromRGB(255, 255, 255)
     end
 
-    -- แก้ไข: ตัดคำสั่งเปลี่ยนสี Stroke ออกจากลูป Rainbow
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
-        -- คืนค่าสีขอบเป็นขาวก่อนเริ่มลูป
         MainStroke.Color = Color3.fromRGB(255, 255, 255)
         BtnStroke.Color = Color3.fromRGB(255, 255, 255)
-        
         RainbowConnection = RunService.RenderStepped:Connect(function()
             local Hue = tick() % 5 / 5
             local Color = Color3.fromHSV(Hue, 0.8, 1)
             MainFrame.BackgroundColor3 = Color
             ToggleBtn.BackgroundColor3 = Color
-            -- ไม่มีการเปลี่ยนสี Stroke ในนี้แล้ว
         end)
     end
 
-    -- Tab & UI Element Logic (Sidebar & Content)
+    -- Tab System
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 110, 1, -80); TabContainer.Position = UDim2.new(0, 12, 0, 50)
     TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
@@ -182,7 +173,6 @@ function Library:CreateWindow(Settings)
             local Holder = Instance.new("Frame", Page)
             Holder.Size = UDim2.new(1, 0, 0, 0); Holder.AutomaticSize = Enum.AutomaticSize.Y; Holder.BackgroundTransparency = 1
             Instance.new("UIListLayout", Holder).Padding = UDim.new(0, 6)
-
             local Sub = {}
             function Sub:CreateButton(Txt, Call)
                 local B = Instance.new("TextButton", Holder)
@@ -191,7 +181,6 @@ function Library:CreateWindow(Settings)
                 Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
                 B.MouseButton1Click:Connect(function() if Call then Call() end end)
             end
-
             function Sub:CreateDropdown(Txt, List, Call)
                 local D = Instance.new("TextButton", Holder)
                 D.Size = UDim2.new(1, 0, 0, 35); D.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
