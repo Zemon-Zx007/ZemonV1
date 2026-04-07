@@ -1,5 +1,5 @@
--- [[ Swift Hub X - RAINBOW & BORDER EDITION ]]
--- [[ Redesigned by Pai | Special for Zemon ]]
+-- [[ Swift Hub X - FULL COLOR & RAINBOW EDITION ]]
+-- [[ Border: 3.5 | Rainbow Support | Redesigned by Pai ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_Rainbow"
+    ScreenGui.Name = "SwiftHubX_FullEdition"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
@@ -24,13 +24,13 @@ function Library:CreateWindow(Settings)
     MainFrame.BorderSizePixel = 0
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 16)
 
-    -- [[ เพิ่มขอบเส้นใหญ่ๆ ชัดๆ ]]
+    -- [[ ขอบเส้นหนาชัดเจน ]]
     local MainStroke = Instance.new("UIStroke", MainFrame)
-    MainStroke.Thickness = 3.5 -- เส้นใหญ่เห็นชัดตามสั่งเลยค้าบ
+    MainStroke.Thickness = 3.5
     MainStroke.Color = Color3.fromRGB(255, 255, 255)
     MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-    -- [[ Floating Button ]]
+    -- [[ ปุ่มลอย S ]]
     local ToggleBtn = Instance.new("TextButton", ScreenGui)
     ToggleBtn.Size = UDim2.new(0, 55, 0, 55)
     ToggleBtn.Position = UDim2.new(0, 10, 0.5, -27)
@@ -100,26 +100,22 @@ function Library:CreateWindow(Settings)
     local WindowAPI = {}
     local RainbowConnection = nil
 
-    -- [[ SetColor System ]]
+    -- [[ Function: Set Color ]]
     function WindowAPI:SetColor(NewColor)
-        if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end -- ปิดเรนโบว์ถ้าเลือกสีปกติ
-        
+        if RainbowConnection then RainbowConnection:Disconnect(); RainbowConnection = nil end
         local TI = TweenInfo.new(0.5, Enum.EasingStyle.Quart)
         TweenService:Create(MainFrame, TI, {BackgroundColor3 = NewColor}):Play()
-        TweenService:Create(MainStroke, TI, {Color = NewColor}):Play() -- ขอบเปลี่ยนตามสี UI
+        TweenService:Create(MainStroke, TI, {Color = NewColor}):Play()
         TweenService:Create(ToggleBtn, TI, {BackgroundColor3 = NewColor}):Play()
         TweenService:Create(BtnStroke, TI, {Color = NewColor}):Play()
     end
 
-    -- [[ Rainbow Mode System ]]
+    -- [[ Function: Set Rainbow ]]
     function WindowAPI:SetRainbow()
         if RainbowConnection then RainbowConnection:Disconnect() end
-        
         RainbowConnection = RunService.RenderStepped:Connect(function()
-            local Hue = tick() % 5 / 5 -- วนลูปสี
+            local Hue = tick() % 5 / 5
             local Color = Color3.fromHSV(Hue, 0.8, 1)
-            
-            -- อัปเดตสีแบบทันที
             MainFrame.BackgroundColor3 = Color
             MainStroke.Color = Color
             ToggleBtn.BackgroundColor3 = Color
@@ -127,7 +123,7 @@ function Library:CreateWindow(Settings)
         end)
     end
 
-    -- Tab System
+    -- Tab & Section System
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 110, 1, -80); TabContainer.Position = UDim2.new(0, 12, 0, 50)
     TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0
@@ -146,6 +142,7 @@ function Library:CreateWindow(Settings)
 
         local Page = Instance.new("ScrollingFrame", ContentHolder)
         Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = firstTab
+        Page.ScrollBarThickness = 0
         Instance.new("UIListLayout", Page).Padding = UDim.new(0, 10)
 
         if firstTab then TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255); firstTab = false end
