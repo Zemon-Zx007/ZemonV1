@@ -1,5 +1,5 @@
--- [[ Swift Hub X - Color Change Edition ]]
--- [[ Redesigned by Pai for Zemon ]]
+-- [[ Swift Hub X - FIXED COLOR SYSTEM ]]
+-- [[ Size: 420 x 340 | Redesigned by Pai for Zemon ]]
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -10,14 +10,14 @@ function Library:CreateWindow(Settings)
     local Title = Settings.Title or "Swift Hub X"
     
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SwiftHubX_ColorV1"
+    ScreenGui.Name = "SwiftHubX_ColorFixed"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- สีเริ่มต้น
+    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
     MainFrame.Size = UDim2.new(0, 420, 0, 340)
     MainFrame.BorderSizePixel = 0
@@ -65,12 +65,7 @@ function Library:CreateWindow(Settings)
         MainFrame.Visible = not MainFrame.Visible
     end)
 
-    -- ฟังก์ชันสำหรับเปลี่ยนสี UI (ซีม่อนเรียกใช้ได้จากข้างนอก)
-    function Library:SetColor(NewColor)
-        TweenService:Create(MainFrame, TweenInfo.new(0.5), {BackgroundColor3 = NewColor}):Play()
-    end
-
-    -- Sidebar & Content setup
+    -- Sidebar & Content
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
     TabContainer.Size = UDim2.new(0, 120, 1, -40)
     TabContainer.Position = UDim2.new(0, 10, 0, 30)
@@ -83,9 +78,15 @@ function Library:CreateWindow(Settings)
     ContentHolder.Size = UDim2.new(1, -145, 1, -55)
     ContentHolder.BackgroundTransparency = 1
 
+    -- สร้าง Table เก็บฟังก์ชันที่จะส่งคืน
     local Tabs = {}
-    local firstTab = true
+    
+    -- *** แก้ไขจุดนี้: ย้าย SetColor เข้ามาอยู่ใน table Tabs ที่เราจะส่งออกไป ***
+    function Tabs:SetColor(NewColor)
+        TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quart), {BackgroundColor3 = NewColor}):Play()
+    end
 
+    local firstTab = true
     function Tabs:CreateTab(TabName)
         local TabButton = Instance.new("TextButton", TabContainer)
         TabButton.Size = UDim2.new(1, 0, 0, 30)
@@ -135,7 +136,6 @@ function Library:CreateWindow(Settings)
             Instance.new("UIListLayout", ItemHolder).Padding = UDim.new(0, 5)
 
             local Sub = {}
-            -- Button
             function Sub:CreateButton(Text, Callback)
                 local B = Instance.new("TextButton", ItemHolder)
                 B.Size = UDim2.new(1, 0, 0, 30)
@@ -147,7 +147,6 @@ function Library:CreateWindow(Settings)
                 B.MouseButton1Click:Connect(function() if Callback then Callback() end end)
             end
 
-            -- Dropdown
             function Sub:CreateDropdown(Text, List, Callback)
                 local D = Instance.new("TextButton", ItemHolder)
                 D.Size = UDim2.new(1, 0, 0, 30)
