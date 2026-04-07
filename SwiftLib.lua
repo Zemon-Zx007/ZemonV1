@@ -1,4 +1,4 @@
--- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.5 (Config Support) ]]
+-- [[ Swift Hub X - PROFESSIONAL LIBRARY V4.6 (UI RECOVERY) ]]
 local Library = {}
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 
 function Library:CreateWindow(Settings)
     local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-    ScreenGui.Name = "SwiftHubX_V4.5"; ScreenGui.ResetOnSpawn = false
+    ScreenGui.Name = "SwiftHubX_V4.6"; ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -76,13 +76,26 @@ function Library:CreateWindow(Settings)
     local TabContainer = Instance.new("ScrollingFrame", TabBorder); TabContainer.Size = UDim2.new(1, -10, 1, -10); TabContainer.Position = UDim2.new(0, 5, 0, 5); TabContainer.BackgroundTransparency = 1; TabContainer.ScrollBarThickness = 0; Instance.new("UIListLayout", TabContainer).Padding = UDim.new(0, 6)
     local ContentHolder = Instance.new("Frame", MenuBorder); ContentHolder.Position = UDim2.new(0, 8, 0, 8); ContentHolder.Size = UDim2.new(1, -16, 1, -16); ContentHolder.BackgroundTransparency = 1
 
-    local first = true
+    local IsFirstTab = true
     function WindowAPI:CreateTab(Name, ID)
-        local ID = ID or Name; local B = Instance.new("TextButton", TabContainer); B.Size = UDim2.new(1, 0, 0, 32); B.BackgroundColor3 = Color3.fromRGB(22, 22, 22); B.Text = Name; B.TextColor3 = Color3.fromRGB(150, 150, 150); B.Font = Enum.Font.Gotham; Instance.new("UICorner", B)
+        local ID = ID or Name
+        local B = Instance.new("TextButton", TabContainer); B.Size = UDim2.new(1, 0, 0, 32); B.BackgroundColor3 = Color3.fromRGB(22, 22, 22); B.Text = Name; B.TextColor3 = Color3.fromRGB(150, 150, 150); B.Font = Enum.Font.Gotham; Instance.new("UICorner", B)
         table.insert(WindowAPI.AllTabs, {Instance = B, ID = ID})
-        local P = Instance.new("ScrollingFrame", ContentHolder); P.Size = UDim2.new(1, 0, 1, 0); P.BackgroundTransparency = 1; P.Visible = first; P.ScrollBarThickness = 0; Instance.new("UIListLayout", P).Padding = UDim.new(0, 10)
-        if first then B.TextColor3 = Color3.fromRGB(255, 255, 255); first = false end
-        B.MouseButton1Click:Connect(function() for _, v in pairs(ContentHolder:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end; for _, btn in pairs(TabContainer:GetChildren()) do if btn:IsA("TextButton") then btn.TextColor3 = Color3.fromRGB(150, 150, 150) end end; P.Visible = true; B.TextColor3 = Color3.fromRGB(255, 255, 255) end)
+        
+        local P = Instance.new("ScrollingFrame", ContentHolder); P.Size = UDim2.new(1, 0, 1, 0); P.BackgroundTransparency = 1; P.Visible = false; P.ScrollBarThickness = 0; P.CanvasSize = UDim2.new(0,0,0,0); Instance.new("UIListLayout", P).Padding = UDim.new(0, 10)
+        
+        if IsFirstTab then
+            P.Visible = true
+            B.TextColor3 = Color3.fromRGB(255, 255, 255)
+            IsFirstTab = false
+        end
+
+        B.MouseButton1Click:Connect(function()
+            for _, v in pairs(ContentHolder:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
+            for _, btn in pairs(TabContainer:GetChildren()) do if btn:IsA("TextButton") then btn.TextColor3 = Color3.fromRGB(150, 150, 150) end end
+            P.Visible = true
+            B.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
         
         local El = {}
         function El:CreateSection()
